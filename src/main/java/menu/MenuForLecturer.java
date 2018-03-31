@@ -20,7 +20,7 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     private PrintTable printTable = new PrintTable();
     private boolean running= true;
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    MenuForLecturer(String myID){
+    MenuForLecturer(){
         this.myID=myID;
     }
 

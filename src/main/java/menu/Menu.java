@@ -3,37 +3,35 @@ package menu;
 import user.Login;
 import menu.extras.Roles;
 
+import static menu.extras.dbUtils.DBUtils.getRole;
+
 
 public class Menu {
-    private String ID;
+    private String username;
     private Roles role;
 
 
     public void selectionMenu(){
         Login login = new Login();
-        login.loginToSystem();
-        try {
-            this.ID   = login.getID();
-            this.role = login.getRole();
-        }catch (Exception e){
-            System.out.println("Goodbye");
+        if (login.loginToSystem()) {
+            this.username = login.getUsername();
+            this.role = Roles.valueOf(getRole(username));
+            selectMenu();
         }
-
-        selectMenu();
     }
 
     private void selectMenu(){
         switch (role){
             case ADMIN:
-                MenuForAdmin menuForAdmin = new MenuForAdmin(ID);
+                MenuForAdmin menuForAdmin = new MenuForAdmin();
                 menuForAdmin.menu();
                 break;
             case LECTURER:
-                MenuForLecturer menuForLecturer = new MenuForLecturer(ID);
+                MenuForLecturer menuForLecturer = new MenuForLecturer();
                 menuForLecturer.menu();
                 break;
             case USER:
-                MenuForUser menuForUser = new MenuForUser(ID);
+                MenuForUser menuForUser = new MenuForUser();
                 menuForUser.menu();
                 break;
             default:

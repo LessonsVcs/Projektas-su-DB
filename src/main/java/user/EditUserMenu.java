@@ -2,24 +2,19 @@ package user;
 
 import menu.extras.Roles;
 import menu.extras.ScannerUntils;
-import user.ReadWriteUserFile;
-import user.User;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Scanner;
+
+import static menu.extras.dbUtils.DBUtils.*;
 
 public class EditUserMenu {
-    private HashMap<Integer, User> users;
 
-    public void menu(Integer id, HashMap<Integer, User> users){
-        this.users = users;
+    public void menu(Integer id){
+
         boolean running = true;
-        boolean changes = false;
-        Scanner scanner = new Scanner(System.in);
 
         while (running){
             System.out.println("Select what to edit");
@@ -30,43 +25,35 @@ public class EditUserMenu {
             String input = ScannerUntils.scanString("");
             switch (Integer.parseInt(input)){
                 case 1:
-                    users.get(id).setFirstName(ScannerUntils.scanString("Enter new name"));
-                    changes= true;
+                    editUserName(ScannerUntils.scanString("Enter new name"),id);
                     break;
                 case 2:
-                    users.get(id).setLastName(ScannerUntils.scanString("Enter new last name"));
-                    changes= true;
+                    editUserLastname(ScannerUntils.scanString("Enter new last name"),id);
                     break;
                 case 3:
-                    users.get(id).setPassword(ScannerUntils.scanString("Enter new password"));
-                    changes= true;
+                    editUserPassword(ScannerUntils.scanString("Enter new password"),id);
                     break;
                 case 4:
-                    changeUsername(id, users);
-                    changes= true;
+                    changeUsername(id);
                     break;
                 case 5:
-                    setDateOfBirth(id, users);
-                    changes= true;
+                    setDateOfBirth(id);
+
                     break;
                 case 6:
-                    users.get(id).setEmail(ScannerUntils.scanString("Enter new  email"));
-                    changes= true;
+                    editUserEmail(ScannerUntils.scanString("Enter new  email"),id);
+
                     break;
                 case 7:
-                    users.get(id).setAddress(ScannerUntils.scanString("Enter new address"));
-                    changes = true;
+                    editUserAddress(ScannerUntils.scanString("Enter new address"),id);
+
                     break;
                 case 8:
-                    changeRole(id, users);
-                    changes = true;
+                    changeRole(id);
+
                     break;
                 case 9:
-                    if(changes){
-                        running = saveUsers(users);
-                    } else {
-                        running = false;
-                    }
+                    running = false;
                     break;
 
                 default:
@@ -75,20 +62,20 @@ public class EditUserMenu {
         }
     }
 
-    private void changeRole(Integer id, HashMap<Integer, User> users ) {
+    private void changeRole(Integer id) {
 
         while (true){
             String tmp = ScannerUntils.scanString("Enter role : admin, user, lecturer");
             if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
                     tmp.equalsIgnoreCase("lecturer")){
-                if(tmp.equalsIgnoreCase("admin") && users.get(id).getRole()!= Roles.ADMIN){
-                    users.get(id).setRole(Roles.ADMIN);
+                if(tmp.equalsIgnoreCase("admin")){
+                    editUserRole(Roles.ADMIN,id);
                     break;
-                } if(tmp.equalsIgnoreCase("lecturer" )&& users.get(id).getRole()!=Roles.LECTURER){
-                    users.get(id).setRole(Roles.LECTURER);
+                } if(tmp.equalsIgnoreCase("lecturer" )){
+                    editUserRole(Roles.LECTURER,id);
                     break;
-                } if(tmp.equalsIgnoreCase("user" )&& users.get(id).getRole()!=Roles.USER) {
-                    users.get(id).setRole(Roles.USER);
+                } if(tmp.equalsIgnoreCase("user" )) {
+                    editUserRole(Roles.USER,id);
                     break;
                 } else{
                     System.out.println("can't change to same role");
@@ -99,34 +86,12 @@ public class EditUserMenu {
         }
     }
 
-    private boolean saveUsers(HashMap<Integer, User> users) {
-        boolean running;
-        while (true){
-            String response = ScannerUntils.scanString("Changes are made, do you want to save? Yes/No");
-            if (response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")){
-                running = false;
-                if (response.equalsIgnoreCase("yes")){
-                    ReadWriteUserFile readWriteUserFile = new ReadWriteUserFile();
-                    readWriteUserFile.setUsers(users);
-                    readWriteUserFile.writeUserFile();
-                    break;
-                } else {
-                    break;
-                }
-            }
-            else {
-                System.out.println("wrong input");
-            }
-        }
-        return running;
-    }
-
-    private void setDateOfBirth(Integer id, HashMap<Integer, User> users) {
+    private void setDateOfBirth(Integer id) {
         while (true){
             try {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 Date date = format.parse(ScannerUntils.scanString("enter new birth date. Year-Month-day Ex: 2000-10-10"));
-                users.get(id).setDateOfBirth(date);
+                editUserDate(date,id);
                 break;
             }catch (Exception e){
                 System.out.println("wrong input");
@@ -134,27 +99,18 @@ public class EditUserMenu {
         }
     }
 
-    private void changeUsername(Integer id, HashMap<Integer, User> users) {
+    private void changeUsername(Integer id) {
         while (true){
             String username = ScannerUntils.scanString("Enter new username");
-            if (checkName(username)){
+            if (checkUsername(username)!=null){
                 System.out.println("this username already exist");
                 break;
             } else {
-                users.get(id).setUsername(username);
+                editUserUsername(username,id);
                 break;
             }
 
         }
     }
 
-    private boolean checkName(String input){
-        //returns true if username exists
-        for (Integer i : users.keySet()) {
-            if (input.equalsIgnoreCase(users.get(i).getUsername())){
-                return true;
-            }
-        }
-        return false;
-    }
 }

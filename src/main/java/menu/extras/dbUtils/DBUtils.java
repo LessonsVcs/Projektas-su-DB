@@ -1,11 +1,16 @@
-package menu.extras;
+package menu.extras.dbUtils;
 
-import javax.management.relation.Role;
+import menu.extras.Roles;
+
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class DBUtils {
     private static final String urlOfDB = "jdbc:h2:~/projektinis4";
     private static final String login = "admin";
+    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     public static void initDriver(){
         try {
             Class.forName("org.h2.Driver");
@@ -100,89 +105,17 @@ public class DBUtils {
         statement.execute();
     }
 
-    public static void newUserToDB(String name, String lastName, String password, String userName, Roles role){
-
-        try (
-                Connection con = DriverManager.getConnection(urlOfDB,login,login)
-        ){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Users (Name,LastName,Password,Username,Role) " +
-                    "VALUES (?,?,?,?,?); ", Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1,name);
-            statement.setString(2,lastName);
-            statement.setString(3,password);
-            statement.setString(4,userName);
-            statement.setString(5,role.toString());
-
-            //statement.execute();
-            statement.executeUpdate();
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                long id = generatedKeys.getLong(1);
-                System.out.println(id);
-            } else {
-                System.out.println("Error on retrieving ID");
-            }
-
-        } catch (Exception e){
-            System.out.println(e);
+    public static Date convertToMysqlDate(java.util.Date in){
+        Date sqlDate;
+        try {
+            sqlDate = Date.valueOf(format.format(in));
+        }catch (Exception e){
+            sqlDate  = null;
         }
+
+        return sqlDate;
     }
 
-    public static void newUserToDBexpress(String name, String lastName, String password, String userName, Roles role,
-                                          String email, Date dateOfBirth, String address){
-        try (
-                Connection con = DriverManager.getConnection(urlOfDB,login,login)
-        ){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Users " +
-                    "(Name,LastName,Password,Username,Role,Email,DateOfBirth,address) " +
-                    "VALUES (?,?,?,?,?,?,?,?); ");
-            statement.setString(1,name);
-            statement.setString(2,lastName);
-            statement.setString(3,password);
-            statement.setString(4,userName);
-            statement.setString(5,role.toString());
-            statement.setString(6,email);
-            statement.setDate(7,dateOfBirth);
-            statement.setString(8,address);
 
-            statement.execute();
-
-        } catch (Exception e){
-
-        }
-    }
-
-    public static void newCourse(String name, String description, Date startDate, String credits){
-
-        try (
-                Connection con = DriverManager.getConnection(urlOfDB,login,login)
-        ){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Users (Name,Description,StartDate,Credits) " +
-                    "VALUES (?,?,?,?); ");
-            statement.setString(1,name);
-            statement.setString(2,description);
-            statement.setDate  (3,startDate);
-            statement.setInt   (4,Integer.parseInt(credits));
-
-            statement.execute();
-
-        } catch (Exception e){
-
-        }
-    }
-
-    public static String checkUsername(String input){
-        try (
-                Connection con = DriverManager.getConnection(urlOfDB,login,login)
-        ){
-            PreparedStatement statement = con.prepareStatement("SELECT password from Users where username = ? ; ");
-            statement.setString(1,input);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getString("password");
-        } catch (SQLException e){
-            return null;
-        }
-    }
 
 }

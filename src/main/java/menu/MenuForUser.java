@@ -23,7 +23,7 @@ public class MenuForUser   implements UserInterface {
     private PrintTable printTable = new PrintTable();
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
-    MenuForUser(String myID){
+    MenuForUser(){
         this.myID=myID;
     }
 
