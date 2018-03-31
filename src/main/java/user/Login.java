@@ -2,7 +2,8 @@ package user;
 
 import menu.extras.ScannerUntils;
 
-import static menu.extras.dbUtils.DBUtils.checkUsername;
+
+import static menu.extras.dbUtils.UserDB.checkUsername;
 
 public class Login {
     private String username;

@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static menu.extras.dbUtils.DBUtils.*;
+import static menu.extras.dbUtils.UserDB.*;
 
 public class EditUserMenu {
 

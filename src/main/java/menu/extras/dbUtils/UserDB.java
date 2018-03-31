@@ -11,7 +11,7 @@ import static menu.extras.dbUtils.DBUtils.convertToMysqlDate;
 import static menu.extras.dbUtils.RelationDB.removeFromRelation;
 
 public class UserDB {
-    private static final String urlOfDB = "jdbc:h2:~/projektinis4";
+    private static final String urlOfDB = "jdbc:h2:~/projektinis5";
     private static final String login = "admin";
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
@@ -243,5 +243,21 @@ public class UserDB {
         }
 
     }
+
+    public static ResultSet getUsers(){
+        ResultSet resultSet;
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT ID, NAME, LASTNAME from Users; ");
+            resultSet = statement.executeQuery();
+            return resultSet;
+
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
 
 }

@@ -9,7 +9,7 @@ import static menu.extras.dbUtils.DBUtils.convertToMysqlDate;
 import static menu.extras.dbUtils.RelationDB.removeFromRelation;
 
 public class CourseDB {
-    private static final String urlOfDB = "jdbc:h2:~/projektinis4";
+    private static final String urlOfDB = "jdbc:h2:~/projektinis5";
     private static final String login = "admin";
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
@@ -57,7 +57,7 @@ public class CourseDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
-            PreparedStatement statement = con.prepareStatement("INSERT INTO Users (Name,Description,StartDate,Credits) " +
+            PreparedStatement statement = con.prepareStatement("INSERT INTO Courses (NAME ,DESCRIPTION ,StartDate,Credits) " +
                     "VALUES (?,?,?,?); ");
             statement.setString(1,name);
             statement.setString(2,description);
@@ -67,9 +67,97 @@ public class CourseDB {
             statement.execute();
 
         } catch (Exception e){
-
+            e.printStackTrace();
         }
     }
 
+    public static void editCourseName(String input, Integer id){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET name = ? WHERE ID = ?; ");
+            statement.setString(1,input);
+            statement.setInt(2,id);
+            statement.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void editCourseDescription(String input, Integer id){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET DESCRIPTION = ? WHERE ID = ?; ");
+            statement.setString(1,input);
+            statement.setInt(2,id);
+            statement.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void editCourseDate(java.util.Date input, Integer id){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET STARTDATE = ? WHERE ID = ?; ");
+            statement.setDate(1,convertToMysqlDate(input));
+            statement.setInt(2,id);
+            statement.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+
+        }
+
+    }
+
+    public static ResultSet getCourses(){
+        ResultSet resultSet;
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT * from Courses; ");
+            resultSet = statement.executeQuery();
+            return resultSet;
+
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static ResultSet getUsersInCourses(int courseID){
+        ResultSet resultSet;
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT ID, NAME, LASTNAME, ROLE from COURSERELATION " +
+                    "JOIN USERS ON  ID_USER = ID where ID_COURSE = ?");
+            statement.setInt(1,courseID);
+            resultSet = statement.executeQuery();
+            return resultSet;
+
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    public static ResultSet getCourseInfo(int courseID){
+        ResultSet resultSet;
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+
+            PreparedStatement statement = con.prepareStatement("SELECT NAME, DESCRIPTION  from COURSES  " +
+                    "WHERE ID_COURSE = ?");
+            statement.setInt(1,courseID);
+            resultSet = statement.executeQuery();
+            return resultSet;
+
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
 
 }

@@ -3,7 +3,8 @@ package menu;
 import user.Login;
 import menu.extras.Roles;
 
-import static menu.extras.dbUtils.DBUtils.getRole;
+
+import static menu.extras.dbUtils.UserDB.getRole;
 
 
 public class Menu {
