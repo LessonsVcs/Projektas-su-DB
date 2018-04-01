@@ -1,9 +1,9 @@
-package user;
+package models;
 
-import menu.extras.ScannerUntils;
+import extras.ScannerUntils;
 
 
-import static menu.extras.dbUtils.UserDB.checkUsername;
+import static dbUtils.UserDB.checkUsername;
 
 public class Login {
     private String username;
@@ -17,7 +17,7 @@ public class Login {
         String username = ScannerUntils.scanString("Enter username");
         String password = checkUsername(username);
         if (password.equals(null)) {
-            System.out.println("user doesn't exit");
+            System.out.println("models doesn't exit");
             checkLogin();
         } else {
             this.username = username;

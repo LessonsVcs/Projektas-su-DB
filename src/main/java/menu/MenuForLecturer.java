@@ -1,21 +1,20 @@
 package menu;
 
-import cources.Course;
-import menu.extras.dbUtils.RelationDB;
-import user.EditProfile;
-import user.Login;
-import menu.extras.*;
+import models.Course;
+import dbUtils.RelationDB;
+import models.Login;
+import extras.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import static menu.extras.dbUtils.CourseDB.*;
-import static menu.extras.dbUtils.RelationDB.addToCourse;
-import static menu.extras.dbUtils.RelationDB.getUserCourses;
-import static menu.extras.dbUtils.RelationDB.isInCourse;
-import static menu.extras.dbUtils.UserDB.*;
+import static dbUtils.CourseDB.*;
+import static dbUtils.RelationDB.addToCourse;
+import static dbUtils.RelationDB.getUserCourses;
+import static dbUtils.RelationDB.isInCourse;
+import static dbUtils.UserDB.*;
 
 public class MenuForLecturer  implements LecturerInterface,UserInterface {
     private int myID;
@@ -213,7 +212,7 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
                             RelationDB.addToCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
                             break;
                         } else {
-                            System.out.println("Can't add user with admin/lecturer role");
+                            System.out.println("Can't add models with admin/lecturer role");
                         }
                     }
                 } else {

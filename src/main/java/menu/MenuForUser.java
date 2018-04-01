@@ -1,20 +1,20 @@
 package menu;
 
-import menu.extras.ScannerUntils;
-import user.Login;
-import menu.extras.PrintTable;
-import menu.extras.UserInterface;
+import extras.ScannerUntils;
+import models.Login;
+import extras.PrintTable;
+import extras.UserInterface;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static menu.extras.dbUtils.CourseDB.*;
-import static menu.extras.dbUtils.RelationDB.*;
-import static menu.extras.dbUtils.UserDB.editUserPassword;
-import static menu.extras.dbUtils.UserDB.getUserCredits;
-import static menu.extras.dbUtils.UserDB.getUserID;
+import static dbUtils.CourseDB.*;
+import static dbUtils.RelationDB.*;
+import static dbUtils.UserDB.editUserPassword;
+import static dbUtils.UserDB.getUserCredits;
+import static dbUtils.UserDB.getUserID;
 
 public class MenuForUser   implements UserInterface {
     private final String username;

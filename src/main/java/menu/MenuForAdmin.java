@@ -1,20 +1,19 @@
 package menu;
 
-import cources.Course;
-import user.EditUserMenu;
-import user.Login;
-import user.User;
-import menu.extras.*;
+import models.Course;
+import models.Login;
+import models.User;
+import extras.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static menu.extras.dbUtils.CourseDB.*;
-import static menu.extras.dbUtils.RelationDB.addToCourse;
-import static menu.extras.dbUtils.RelationDB.removeFromCourse;
-import static menu.extras.dbUtils.UserDB.*;
+import static dbUtils.CourseDB.*;
+import static dbUtils.RelationDB.addToCourse;
+import static dbUtils.RelationDB.removeFromCourse;
+import static dbUtils.UserDB.*;
 
 public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterface {
     private String username;
@@ -31,9 +30,9 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         //Menu for selecting operation
         while (running) {
             System.out.println("Select option");
-            System.out.println("1) create user      2) delete user      3) edit user      \n" +
-                    "4) delete course    5) create course    6) show user list \n" +
-                    "7) register user to course    8) remove user from course  \n" +
+            System.out.println("1) create models      2) delete models      3) edit models      \n" +
+                    "4) delete course    5) create course    6) show models list \n" +
+                    "7) register models to course    8) remove models from course  \n" +
                     "9) show course list 10)show course     11) Edit course    \n" +
                     "12)Exit");
             selectOperation(ScannerUntils.scanString(""));
@@ -93,8 +92,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     @Override
     public void createUser() {
         User newUser = new User();
-        String input = ScannerUntils.scanString("Create simple user? Yes/No or exit");
-        //Create user simple or express. Simple doesn't have: email, dateOfBirth, address,
+        String input = ScannerUntils.scanString("Create simple models? Yes/No or exit");
+        //Create models simple or express. Simple doesn't have: email, dateOfBirth, address,
         if (input.equalsIgnoreCase("exit")){
             return;
         }else {
@@ -149,7 +148,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         while (true){
             System.out.println();
             String tmp = ScannerUntils.scanString("enter role");
-            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
+            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("models") ||
                     tmp.equalsIgnoreCase("lecturer")){
                 if(tmp.equalsIgnoreCase("admin")){
                     role = Roles.ADMIN;
@@ -157,7 +156,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 if(tmp.equalsIgnoreCase("lecturer")){
                     role = Roles.LECTURER;
                 }
-                if(tmp.equalsIgnoreCase("user")){
+                if(tmp.equalsIgnoreCase("models")){
                     role = Roles.USER;
                 }
                 else {
@@ -255,8 +254,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     @Override
     public void deleteUser() {
-        String input = ScannerUntils.scanString("Enter user id");
-        //Checks if user with that ID exist and removes
+        String input = ScannerUntils.scanString("Enter models id");
+        //Checks if models with that ID exist and removes
         deleteUserDB(input);
     }
 
@@ -264,8 +263,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     public void editUser() {
         EditUserMenu editUserMenu = new EditUserMenu();
         while (true) {
-            String input = ScannerUntils.scanString("Enter user id or exit");
-            //Checks if user exits
+            String input = ScannerUntils.scanString("Enter models id or exit");
+            //Checks if models exits
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -274,7 +273,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 editUserMenu.menu(Integer.parseInt(input));
                 break;
             }else {
-                System.out.println("user doesn't exist");
+                System.out.println("models doesn't exist");
             }
         }
 
@@ -356,7 +355,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 addToCourse(Integer.parseInt(input),courseID);
                 break;
             }else {
-                System.out.println("user doesn't exist");
+                System.out.println("models doesn't exist");
             }
         }
 
@@ -364,7 +363,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     @Override
     public void removeUserFromCourse() {
-        //removes selected user from course
+        //removes selected models from course
 
         String course_id = ScannerUntils.scanString("Enter course id");
 
@@ -378,7 +377,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                     removeFromCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
                     break;
                 }else {
-                    System.out.println("user doesn't exist");
+                    System.out.println("models doesn't exist");
                 }
             }
         } else {

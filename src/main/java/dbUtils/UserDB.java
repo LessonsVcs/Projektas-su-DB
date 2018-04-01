@@ -1,14 +1,14 @@
-package menu.extras.dbUtils;
+package dbUtils;
 
-import menu.extras.Roles;
+import extras.Roles;
 
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import static menu.extras.dbUtils.DBUtils.convertToMysqlDate;
-import static menu.extras.dbUtils.RelationDB.removeFromRelation;
+import static dbUtils.DBUtils.convertToMysqlDate;
+import static dbUtils.RelationDB.removeFromRelation;
 
 public class UserDB {
     private static final String urlOfDB = "jdbc:h2:~/projektinis5";
@@ -104,7 +104,7 @@ public class UserDB {
             removeFromRelation(true,Integer.parseInt(input));
             System.out.println("User deleted");
         } catch (SQLException e){
-            System.out.println("failed to delete user");
+            System.out.println("failed to delete models");
         }
     }
 

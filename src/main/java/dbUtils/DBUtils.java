@@ -1,6 +1,4 @@
-package menu.extras.dbUtils;
-
-import menu.extras.Roles;
+package dbUtils;
 
 import java.sql.*;
 import java.text.DateFormat;

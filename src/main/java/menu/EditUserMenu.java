@@ -1,14 +1,14 @@
-package user;
+package menu;
 
-import menu.extras.Roles;
-import menu.extras.ScannerUntils;
+import extras.Roles;
+import extras.ScannerUntils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static menu.extras.dbUtils.UserDB.*;
+import static dbUtils.UserDB.*;
 
 public class EditUserMenu {
 
@@ -65,8 +65,8 @@ public class EditUserMenu {
     private void changeRole(Integer id) {
 
         while (true){
-            String tmp = ScannerUntils.scanString("Enter role : admin, user, lecturer");
-            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
+            String tmp = ScannerUntils.scanString("Enter role : admin, models, lecturer");
+            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("models") ||
                     tmp.equalsIgnoreCase("lecturer")){
                 if(tmp.equalsIgnoreCase("admin")){
                     editUserRole(Roles.ADMIN,id);
@@ -74,7 +74,7 @@ public class EditUserMenu {
                 } if(tmp.equalsIgnoreCase("lecturer" )){
                     editUserRole(Roles.LECTURER,id);
                     break;
-                } if(tmp.equalsIgnoreCase("user" )) {
+                } if(tmp.equalsIgnoreCase("models")) {
                     editUserRole(Roles.USER,id);
                     break;
                 } else{

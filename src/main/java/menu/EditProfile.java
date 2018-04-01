@@ -1,6 +1,6 @@
-package user;
+package menu;
 
-import menu.extras.ScannerUntils;
+import extras.ScannerUntils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-import static menu.extras.dbUtils.UserDB.*;
+import static dbUtils.UserDB.*;
 
 public class EditProfile {
 

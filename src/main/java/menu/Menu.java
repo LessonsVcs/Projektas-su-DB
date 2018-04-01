@@ -1,10 +1,10 @@
 package menu;
 
-import user.Login;
-import menu.extras.Roles;
+import models.Login;
+import extras.Roles;
 
 
-import static menu.extras.dbUtils.UserDB.getRole;
+import static dbUtils.UserDB.getRole;
 
 
 public class Menu {

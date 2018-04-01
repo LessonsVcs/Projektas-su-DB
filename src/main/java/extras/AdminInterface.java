@@ -1,4 +1,4 @@
-package menu.extras;
+package extras;
 
 public interface AdminInterface {
     abstract void createUser();

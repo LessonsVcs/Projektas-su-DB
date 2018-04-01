@@ -1,28 +1,14 @@
-package cources;
+package models;
 
 import java.util.Date;
 
 public class Course {
     private String  name;
     private String  description;
-    private String  courseID;
     private Date startDate;
     private String credits;
 
-    public Course(){
-
-    }
-    public Course(String name, String description, String courseID, Date startDate, String credits){
-        this.name = name;
-        this.description = description;
-        this.courseID = courseID;
-        this.startDate = startDate;
-        this.credits = credits;
-    }
-
-    public void setCourseID(String courseID) {
-        this.courseID = courseID;
-    }
+    public Course(){}
 
     public String getCredits() {
         return credits;
@@ -38,10 +24,6 @@ public class Course {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-    public String getCourseID() {
-        return courseID;
     }
 
     public String getName() {

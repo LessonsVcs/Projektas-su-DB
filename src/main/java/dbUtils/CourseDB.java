@@ -1,4 +1,4 @@
-package menu.extras.dbUtils;
+package dbUtils;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -6,9 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static menu.extras.dbUtils.DBUtils.convertToMysqlDate;
-import static menu.extras.dbUtils.DBUtils.convertToUtilDate;
-import static menu.extras.dbUtils.RelationDB.removeFromRelation;
+import static dbUtils.DBUtils.convertToMysqlDate;
+import static dbUtils.DBUtils.convertToUtilDate;
+import static dbUtils.RelationDB.removeFromRelation;
 
 public class CourseDB {
     private static final String urlOfDB = "jdbc:h2:~/projektinis5";

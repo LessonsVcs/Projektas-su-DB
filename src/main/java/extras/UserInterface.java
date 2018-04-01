@@ -1,4 +1,4 @@
-package menu.extras;
+package extras;
 
 public interface UserInterface {
     abstract void viewCourses();

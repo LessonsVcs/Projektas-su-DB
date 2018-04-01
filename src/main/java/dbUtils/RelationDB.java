@@ -1,6 +1,6 @@
-package menu.extras.dbUtils;
+package dbUtils;
 
-import menu.extras.Roles;
+import extras.Roles;
 
 import java.sql.*;
 
@@ -18,7 +18,7 @@ public class RelationDB {
                 statement.execute();
                 System.out.println("User deleted");
             } catch (SQLException e) {
-                System.out.println("failed to delete user");
+                System.out.println("failed to delete models");
             }
         } else {
             try (
@@ -62,7 +62,7 @@ public class RelationDB {
             statement.execute();
             System.out.println("User deleted from course");
         } catch (SQLException e) {
-            System.out.println("failed to delete user from course");
+            System.out.println("failed to delete models from course");
         }
     }
 

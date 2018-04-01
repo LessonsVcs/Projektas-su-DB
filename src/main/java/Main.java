@@ -1,11 +1,6 @@
-
-import menu.extras.Roles;
-
-
-import static menu.extras.dbUtils.CourseDB.newCourseDB;
-import static menu.extras.dbUtils.DBUtils.initDB;
-import static menu.extras.dbUtils.DBUtils.initDriver;
-import static menu.extras.dbUtils.UserDB.newUserToDB;
+import static dbUtils.CourseDB.newCourseDB;
+import static dbUtils.DBUtils.initDB;
+import static dbUtils.DBUtils.initDriver;
 
 public class Main {
     public static void main(String[] args) {
