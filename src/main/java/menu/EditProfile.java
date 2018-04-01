@@ -59,6 +59,8 @@ public class EditProfile {
                 break;
             }catch (Exception e){
                 System.out.println("wrong input");
+
+
             }
         }
     }

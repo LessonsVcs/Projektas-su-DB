@@ -5,6 +5,7 @@ import extras.Roles;
 import java.util.Date;
 
 public class User {
+    private String      ID ;
     private Roles       role;
     private String      firstName;
     private String      lastName;
@@ -81,5 +82,11 @@ public class User {
         this.address = address;
     }
 
+    public String getID() {
+        return ID;
+    }
 
+    public void setID(String ID) {
+        this.ID = ID;
+    }
 }

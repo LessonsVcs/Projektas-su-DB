@@ -20,6 +20,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     private int myID;
     private boolean running = true;
     private PrintTable printTable = new PrintTable();
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     MenuForAdmin(){
         Login login = new Login();
         this.username= login.getUsername();
@@ -30,12 +31,17 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         //Menu for selecting operation
         while (running) {
             System.out.println("Select option");
-            System.out.println("1) create models      2) delete models      3) edit models      \n" +
-                    "4) delete course    5) create course    6) show models list \n" +
-                    "7) register models to course    8) remove models from course  \n" +
+            System.out.println("1) create user      2) delete user      3) edit user      \n" +
+                    "4) delete course    5) create course    6) show user list \n" +
+                    "7) register user to course    8) remove user from course  \n" +
                     "9) show course list 10)show course     11) Edit course    \n" +
                     "12)Exit");
             selectOperation(ScannerUntils.scanString(""));
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -147,8 +153,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         Roles role = Roles.USER;
         while (true){
             System.out.println();
-            String tmp = ScannerUntils.scanString("enter role");
-            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("models") ||
+            String tmp = ScannerUntils.scanString("enter role (admin/lecturer/user)");
+            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
                     tmp.equalsIgnoreCase("lecturer")){
                 if(tmp.equalsIgnoreCase("admin")){
                     role = Roles.ADMIN;
@@ -156,11 +162,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 if(tmp.equalsIgnoreCase("lecturer")){
                     role = Roles.LECTURER;
                 }
-                if(tmp.equalsIgnoreCase("models")){
+                if(tmp.equalsIgnoreCase("user")){
                     role = Roles.USER;
-                }
-                else {
-                    System.out.println("wrong input");
                 }
                 break;
             } else {
@@ -223,16 +226,13 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     @Override
     public void viewUsers() {
         //Prints out all users : ID, First name, Last name
-        ResultSet users = getUsers();
+        HashMap<Integer, User> userHashMap = getUsers();
         printTable.printUserHeader();
-        try {
-            while (users.next()) {
-                printTable.printUserList(users.getString("ID"),users.getString("NAME"),users.getString("LASTNAME"));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
+        for (Integer i : userHashMap.keySet()) {
+            printTable.printUserList(userHashMap.get(i).getID(), userHashMap.get(i).getFirstName(),
+                    userHashMap.get(i).getLastName());
 
+        }
     }
 
     @Override
@@ -254,8 +254,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     @Override
     public void deleteUser() {
-        String input = ScannerUntils.scanString("Enter models id");
-        //Checks if models with that ID exist and removes
+        String input = ScannerUntils.scanString("Enter user id");
+        //Checks if user with that ID exist and removes
         deleteUserDB(input);
     }
 
@@ -263,8 +263,8 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     public void editUser() {
         EditUserMenu editUserMenu = new EditUserMenu();
         while (true) {
-            String input = ScannerUntils.scanString("Enter models id or exit");
-            //Checks if models exits
+            String input = ScannerUntils.scanString("Enter user id or exit");
+            //Checks if user exits
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -273,7 +273,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 editUserMenu.menu(Integer.parseInt(input));
                 break;
             }else {
-                System.out.println("models doesn't exist");
+                System.out.println("user doesn't exist");
             }
         }
 
@@ -283,17 +283,14 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     @Override
     public void viewCourses() {
         //Prints out table : ID, Name, Description
-        ResultSet courses = getCourses();
+        HashMap<Integer, Course> courseHashMap = getCourses();
         printTable.printCoursesHeader();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        try {
-            while (courses.next()) {
-                printTable.printCoursesList(courses.getString("ID_COURSE"),courses.getString("NAME"),courses.getString("DESCRIPTION"),
-                        format.format(courses.getDate("STARTDATE")),courses.getString("CREDITS"));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
+        for (Integer i : courseHashMap.keySet()) {
+            printTable.printCoursesList(courseHashMap.get(i).getID(),courseHashMap.get(i).getName(),
+                    courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
+                    courseHashMap.get(i).getCredits());
         }
+
 
     }
 
@@ -355,7 +352,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 addToCourse(Integer.parseInt(input),courseID);
                 break;
             }else {
-                System.out.println("models doesn't exist");
+                System.out.println("user doesn't exist");
             }
         }
 
@@ -363,7 +360,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     @Override
     public void removeUserFromCourse() {
-        //removes selected models from course
+        //removes selected user from course
 
         String course_id = ScannerUntils.scanString("Enter course id");
 
@@ -377,7 +374,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                     removeFromCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
                     break;
                 }else {
-                    System.out.println("models doesn't exist");
+                    System.out.println("user doesn't exist");
                 }
             }
         } else {

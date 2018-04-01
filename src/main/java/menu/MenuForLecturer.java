@@ -4,6 +4,7 @@ import models.Course;
 import dbUtils.RelationDB;
 import models.Login;
 import extras.*;
+import models.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -101,17 +102,13 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
 
     @Override
     public void viewCourses() {
-        //Prints out table : ID, Name, Description, start date
-        ResultSet courses = getCourses();
+        //Prints out table : ID, Name, Description
+        HashMap<Integer, Course> courseHashMap = getCourses();
         printTable.printCoursesHeader();
-        try {
-            while (courses.next()) {
-                printTable.printCoursesList(courses.getString("ID_COURSE"),courses.getString("NAME"),
-                        courses.getString("DESCRIPTION"), format.format(courses.getDate("STARTDATE")),
-                        courses.getString("CREDITS"));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
+        for (Integer i : courseHashMap.keySet()) {
+            printTable.printCoursesList(courseHashMap.get(i).getID(),courseHashMap.get(i).getName(),
+                    courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
+                    courseHashMap.get(i).getCredits());
         }
     }
 
@@ -183,17 +180,13 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
 
     @Override
     public void viewUsers() {
-        ResultSet users = getUsers();
+        //Prints out all users : ID, First name, Last name
+        HashMap<Integer, User> userHashMap = getUsers();
         printTable.printUserHeader();
-        try {
-            while (users.next()) {
-                printTable.printUserList(users.getString("ID"),users.getString("NAME"),
-                        users.getString("LASTNAME"));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
+        for (Integer i : userHashMap.keySet()) {
+            printTable.printUserList(userHashMap.get(i).getID(), userHashMap.get(i).getFirstName(),
+                    userHashMap.get(i).getLastName());
         }
-
     }
 
     @Override

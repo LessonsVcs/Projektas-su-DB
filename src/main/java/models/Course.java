@@ -8,6 +8,16 @@ public class Course {
     private Date startDate;
     private String credits;
 
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    private String ID;
+
     public Course(){}
 
     public String getCredits() {

@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class DBUtils {
-    private static final String urlOfDB = "jdbc:h2:~/projektinis5";
+    private static final String urlOfDB = "jdbc:h2:~/projektinis6";
     private static final String login = "admin";
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     public static void initDriver(){

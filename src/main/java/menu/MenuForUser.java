@@ -1,6 +1,7 @@
 package menu;
 
 import extras.ScannerUntils;
+import models.Course;
 import models.Login;
 import extras.PrintTable;
 import extras.UserInterface;
@@ -69,16 +70,13 @@ public class MenuForUser   implements UserInterface {
 
     @Override
     public void viewCourses() {
-        ResultSet courses = getCourses();
+        //Prints out table : ID, Name, Description
+        HashMap<Integer, Course> courseHashMap = getCourses();
         printTable.printCoursesHeader();
-        try {
-            while (courses.next()) {
-                printTable.printCoursesList(courses.getString("ID_COURSE"),courses.getString("NAME"),
-                        courses.getString("DESCRIPTION"), format.format(courses.getDate("STARTDATE")),
-                        courses.getString("CREDITS"));
-            }
-        } catch (SQLException e){
-            e.printStackTrace();
+        for (Integer i : courseHashMap.keySet()) {
+            printTable.printCoursesList(courseHashMap.get(i).getID(),courseHashMap.get(i).getName(),
+                    courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
+                    courseHashMap.get(i).getCredits());
         }
     }
 

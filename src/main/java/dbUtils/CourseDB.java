@@ -1,9 +1,12 @@
 package dbUtils;
 
+import models.Course;
+
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static dbUtils.DBUtils.convertToMysqlDate;
@@ -11,21 +14,28 @@ import static dbUtils.DBUtils.convertToUtilDate;
 import static dbUtils.RelationDB.removeFromRelation;
 
 public class CourseDB {
-    private static final String urlOfDB = "jdbc:h2:~/projektinis5";
+    private static final String urlOfDB = "jdbc:h2:~/projektinis6";
     private static final String login = "admin";
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public static boolean courseNameExist(String input){
+        boolean value = false;
+
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("SELECT ID_COURSE from Courses where name = ? ; ");
             statement.setString(1,input);
-            statement.execute();
-            return true;
+            ResultSet resultSet =statement.executeQuery();
+
+            if(resultSet.getInt("ID_COURSE") >=1){
+                value = true;
+            }
+            //return true;
         } catch (SQLException e){
-            return false;
+            //return false;
         }
+        return value;
     }
 
     public static void deleteCourseDB(String input){
@@ -43,16 +53,20 @@ public class CourseDB {
     }
 
     public static boolean courseExist(String input){
+        boolean value = false;
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("Select ID_COURSE FROM Courses where ID_COURSE = ? ; ");
             statement.setInt(1,Integer.parseInt(input));
-            statement.executeQuery();
-            return true;
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.getInt("ID_COURSE") >=1){
+                value = true;
+            }
         } catch (SQLException e){
-            return false;
+            //return false;
         }
+        return value;
     }
 
     public static void newCourseDB(String name, String description, java.util.Date startDate, String credits){
@@ -114,19 +128,29 @@ public class CourseDB {
 
     }
 
-    public static ResultSet getCourses(){
-        ResultSet resultSet;
+    public static HashMap getCourses(){
+        HashMap<Integer, Course> courseHashMap = new HashMap<>();
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("SELECT * from Courses; ");
-            resultSet = statement.executeQuery();
-            return resultSet;
+            ResultSet resultSet = statement.executeQuery();
 
+            int counter = 0;
+            while (resultSet.next()){
+                Course course = new Course();
+                course.setName(resultSet.getString("NAME"));
+                course.setID(resultSet.getString("ID_COURSE"));
+                course.setCredits(resultSet.getString("CREDITS"));
+                course.setDescription(resultSet.getString("DESCRIPTION"));
+                course.setStartDate(resultSet.getDate("STARTDATE"));
+
+                courseHashMap.put(counter++,course);
+            }
         } catch (Exception e){
             System.out.println(e);
-            return null;
         }
+        return courseHashMap;
     }
 
     public static ResultSet getUsersInCourses(int courseID){

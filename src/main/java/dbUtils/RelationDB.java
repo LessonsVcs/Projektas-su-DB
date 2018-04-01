@@ -5,7 +5,7 @@ import extras.Roles;
 import java.sql.*;
 
 public class RelationDB {
-    private static final String urlOfDB = "jdbc:h2:~/projektinis5";
+    private static final String urlOfDB = "jdbc:h2:~/projektinis6";
     private static final String login = "admin";
 
     public static void removeFromRelation(Boolean removeUser, int id){

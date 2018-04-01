@@ -26,8 +26,8 @@ public class PrintTable {
         System.out.format("+------+---------------------+------------------------------+--------+---------------+%n");
     }
     public void printCoursesList(String ID, String name, String description, String date, String credits){
-        String leftAlignFormat = "| %-4s | %-19s | %-28s | %-13s | %-6s |%n";
-        System.out.format(leftAlignFormat,ID,name,description,date,credits);
+        String leftAlignFormat = "| %-4s | %-19s | %-28s |  %-5s | %-13s |%n";
+        System.out.format(leftAlignFormat,ID,name,description,credits,date);
         System.out.format("+------+---------------------+------------------------------+--------+---------------+%n");
 
     }

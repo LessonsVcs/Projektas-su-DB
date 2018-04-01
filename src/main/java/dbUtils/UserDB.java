@@ -1,17 +1,19 @@
 package dbUtils;
 
 import extras.Roles;
+import models.User;
 
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static dbUtils.DBUtils.convertToMysqlDate;
 import static dbUtils.RelationDB.removeFromRelation;
 
 public class UserDB {
-    private static final String urlOfDB = "jdbc:h2:~/projektinis5";
+    private static final String urlOfDB = "jdbc:h2:~/projektinis6";
     private static final String login = "admin";
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
@@ -109,16 +111,20 @@ public class UserDB {
     }
 
     public static boolean userExist(String input){
+        boolean value= false;
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("Select ID FROM Users where ID = ? ;");
             statement.setInt(1,Integer.parseInt(input));
-            statement.executeQuery();
-            return true;
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.getInt("ID")>0){
+                value=true;
+            }
         } catch (SQLException e){
-            return false;
+
         }
+        return value;
     }
 
     public static void editUserName(String input, Integer id){
@@ -241,19 +247,26 @@ public class UserDB {
 
     }
 
-    public static ResultSet getUsers(){
-        ResultSet resultSet;
+    public static HashMap getUsers(){
+        HashMap<Integer,User> userHashMap = new HashMap<>();
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("SELECT ID, NAME, LASTNAME from Users; ");
-            resultSet = statement.executeQuery();
-            return resultSet;
+            ResultSet resultSet = statement.executeQuery();
+            int counter = 0;
+            while (resultSet.next()){
+                User user = new User();
+                user.setFirstName(resultSet.getString("NAME"));
+                user.setLastName(resultSet.getString("LASTNAME"));
+                user.setID(String.valueOf(resultSet.getInt("ID")));
+                userHashMap.put(counter++,user);
+            }
 
         } catch (Exception e){
             System.out.println(e);
-            return null;
         }
+        return userHashMap;
     }
 
     public static int getUserID(String username){
