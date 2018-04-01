@@ -15,8 +15,6 @@ import static dbUtils.RelationDB.removeFromRelation;
 public class UserDB {
     private static final String urlOfDB = "jdbc:h2:~/projektinis6";
     private static final String login = "admin";
-    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
 
     public static void newUserToDB(String name, String lastName, String password, String userName, Roles role){
 
@@ -39,7 +37,7 @@ public class UserDB {
 //                System.out.println("Error on retrieving ID");
 //            }
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println("can't create user");
         }
     }
 
@@ -64,7 +62,7 @@ public class UserDB {
             statement.execute();
 
         } catch (Exception e){
-
+            System.out.println("can't create user");
         }
     }
 
@@ -82,17 +80,32 @@ public class UserDB {
         }
     }
 
-    public static String getRole(String input){
-        try (
-                Connection con = DriverManager.getConnection(urlOfDB,login,login)
-        ){
-            PreparedStatement statement = con.prepareStatement("SELECT role from Users where username = ? ; ");
-            statement.setString(1,input);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getString("role");
-        } catch (SQLException e){
-            return null;
+    public static String getRole(Boolean byID,String input){
+        if (byID) {
+            try (
+                    Connection con = DriverManager.getConnection(urlOfDB, login, login)
+            ) {
+                PreparedStatement statement = con.prepareStatement("SELECT role from Users where id = ? ; ");
+                statement.setInt(1, Integer.parseInt(input));
+                ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
+                return resultSet.getString("role");
+            } catch (SQLException e) {
+                return null;
+            }
+        } else {
+            try (
+                    Connection con = DriverManager.getConnection(urlOfDB, login, login)
+            ) {
+                PreparedStatement statement = con.prepareStatement("SELECT role from Users where username = ? ; ");
+                statement.setString(1, input);
+                ResultSet resultSet = statement.executeQuery();
+                resultSet.next();
+                return resultSet.getString("role");
+            } catch (SQLException e) {
+                return null;
+            }
+
         }
     }
 
@@ -100,13 +113,13 @@ public class UserDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
+            removeFromRelation(true,Integer.parseInt(input));
             PreparedStatement statement = con.prepareStatement("DELETE FROM Users where ID = ? ; ");
             statement.setInt(1,Integer.parseInt(input));
             statement.execute();
-            removeFromRelation(true,Integer.parseInt(input));
-            System.out.println("User deleted");
+
         } catch (SQLException e){
-            System.out.println("failed to delete models");
+            System.out.println("failed to delete user");
         }
     }
 
@@ -118,6 +131,7 @@ public class UserDB {
             PreparedStatement statement = con.prepareStatement("Select ID FROM Users where ID = ? ;");
             statement.setInt(1,Integer.parseInt(input));
             ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
             if(resultSet.getInt("ID")>0){
                 value=true;
             }
@@ -136,7 +150,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("failed to update user");
 
         }
 
@@ -151,7 +165,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("failed to update user");
 
         }
 
@@ -166,8 +180,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
-
+            System.out.println("failed to update user");
         }
 
     }
@@ -181,8 +194,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
-
+            System.out.println("failed to update user");
         }
 
     }
@@ -196,8 +208,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
-
+            System.out.println("failed to update user");
         }
 
     }
@@ -211,8 +222,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
-
+            System.out.println("failed to update user");
         }
 
     }
@@ -226,8 +236,7 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
-
+            System.out.println("failed to update user");
         }
 
     }
@@ -241,10 +250,8 @@ public class UserDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
-
+            System.out.println("failed to update user");
         }
-
     }
 
     public static HashMap getUsers(){
@@ -264,7 +271,7 @@ public class UserDB {
             }
 
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println("failed to get users");
         }
         return userHashMap;
     }

@@ -5,8 +5,8 @@ import models.Course;
 import models.Login;
 import extras.PrintTable;
 import extras.UserInterface;
+import models.User;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,10 +24,9 @@ public class MenuForUser   implements UserInterface {
     private PrintTable printTable = new PrintTable();
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
-    MenuForUser(){
-        Login login = new Login();
-        this.username= login.getUsername();
-        this.myID=getUserID(username);
+    MenuForUser(String username){
+        this.username= username;
+        this.myID=getUserID(this.username);
     }
 
 
@@ -83,7 +82,7 @@ public class MenuForUser   implements UserInterface {
     @Override
     public void register() {
         while (true) {
-            String  course_id = ScannerUntils.scanString("Enter person id or exit");
+            String  course_id = ScannerUntils.scanString("Enter course id or exit");
             if (course_id.equalsIgnoreCase("exit")){
                 break;
             } else if(courseExist(course_id)){
@@ -140,14 +139,14 @@ public class MenuForUser   implements UserInterface {
 
     private void showSelectedCourse(Integer i){
         //Prints out table who goes to course, First name, Last name, Role
-        ResultSet users = getUsersInCourses(i);
-        ResultSet course = getUsersInCourses(i);
+        HashMap<Integer, User> users = getUsersInCourses(i);
+        Course course = getCourseInfo(i);
         try {
-            printTable.printDescription(course.getString("NAME"),course.getString("DESCRIPTION"));
+            printTable.printDescription(course.getName(),course.getDescription());
             printTable.printCourseHeader();
-            while (users.next()) {
-                printTable.printCourse(users.getString("NAME"),
-                        users.getString("LASTNAME"), users.getString("ROLE"));
+            for (Integer j : users.keySet()) {
+                printTable.printCourse(users.get(j).getFirstName(),
+                        users.get(j).getLastName(), users.get(j).getRole().toString());
             }
         } catch (Exception e){
             System.out.println("There's no one in course ");
@@ -161,13 +160,13 @@ public class MenuForUser   implements UserInterface {
 
     private void showMyCourses(){
         //Prints out table : ID, Name, Description
-        ResultSet courses = getUserCourses(myID);
+        HashMap<Integer, Course> courses = getUserCourses(myID);
         printTable.printCoursesHeader();
         try {
-            while (courses.next()){
-                printTable.printCoursesList(courses.getString("ID_COURSE"), courses.getString("NAME"),
-                        courses.getString("DESCRIPTION"), format.format(courses.getString("STARTDATE")),
-                        courses.getString("CREDITS"));
+            for (Integer i :courses.keySet()){
+                printTable.printCoursesList(courses.get(i).getID(), courses.get(i).getName(),
+                        courses.get(i).getDescription(), format.format(courses.get(i).getStartDate()),
+                        courses.get(i).getCredits());
 
             }
         } catch (Exception e){

@@ -12,6 +12,7 @@ import java.util.*;
 
 import static dbUtils.CourseDB.*;
 import static dbUtils.RelationDB.addToCourse;
+import static dbUtils.RelationDB.isInCourse;
 import static dbUtils.RelationDB.removeFromCourse;
 import static dbUtils.UserDB.*;
 
@@ -21,10 +22,10 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     private boolean running = true;
     private PrintTable printTable = new PrintTable();
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    MenuForAdmin(){
+    MenuForAdmin(String username){
         Login login = new Login();
         this.username= login.getUsername();
-        this.myID=getUserID(username);
+        this.myID=getUserID(this.username);
     }
 
     public void menu(){
@@ -249,14 +250,18 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 System.out.println("Course doesn't exist");
             }
         }
-
     }
 
     @Override
     public void deleteUser() {
         String input = ScannerUntils.scanString("Enter user id");
         //Checks if user with that ID exist and removes
-        deleteUserDB(input);
+        if (userExist(input)){
+            deleteUserDB(input);
+        } else {
+            System.out.println("user doesn't exist");
+        }
+
     }
 
     @Override
@@ -290,8 +295,6 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                     courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
                     courseHashMap.get(i).getCredits());
         }
-
-
     }
 
     @Override
@@ -312,14 +315,14 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private void showSelectedCourse(Integer i){
         //Prints out table who goes to course, First name, Last name, Role
-        ResultSet users = getUsersInCourses(i);
-        ResultSet course = getUsersInCourses(i);
+        HashMap<Integer,User> users = getUsersInCourses(i);
+        Course course = getCourseInfo(i);
         try {
-            printTable.printDescription(course.getString("NAME"),course.getString("DESCRIPTION"));
+            printTable.printDescription(course.getName(),course.getDescription());
             printTable.printCourseHeader();
-            while (users.next()) {
-                printTable.printCourse(users.getString("NAME"),
-                        users.getString("LASTNAME"), users.getString("ROLE"));
+            for (Integer j : users.keySet()) {
+                printTable.printCourse(users.get(j).getFirstName(),
+                        users.get(j).getLastName(), users.get(j).getRole().toString());
             }
         } catch (Exception e){
             System.out.println("There's no one in course ");
@@ -329,33 +332,22 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     @Override
     public void register() {
         while (true) {
-            String input = ScannerUntils.scanString("Enter course id or exit");
-            if (input.equalsIgnoreCase("exit")){
+            String course_id = ScannerUntils.scanString("Enter course id or exit");
+            if (course_id.equalsIgnoreCase("exit")){
                 break;
             }
-            if(courseExist(input)){
-                checkIfUserExists(Integer.parseInt(input));
+            if(courseExist(course_id)){
+                String user_id = ScannerUntils.scanString("Enter user id or exit");
+                if(userExist(user_id)){
+                    addToCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
+                } else {
+                    System.out.println("user doesn't exist");
+                }
                 break;
             } else {
                 System.out.println("Course doesn't exist");
             }
         }
-    }
-
-    private void checkIfUserExists(Integer courseID){
-        while (true) {
-            String input = ScannerUntils.scanString("Enter person id or exit");
-            if (input.equalsIgnoreCase("exit")){
-                break;
-            }
-            if(userExist(input)){
-                addToCourse(Integer.parseInt(input),courseID);
-                break;
-            }else {
-                System.out.println("user doesn't exist");
-            }
-        }
-
     }
 
     @Override
@@ -371,7 +363,11 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                     break;
                 }
                 if(userExist(user_id)){
-                    removeFromCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
+                    if(isInCourse(Integer.parseInt(user_id),Integer.parseInt(course_id))){
+                        removeFromCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
+                    } else {
+                        System.out.println("User isn't in this course");
+                    }
                     break;
                 }else {
                     System.out.println("user doesn't exist");
@@ -420,6 +416,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                     break;
                 case 4:
                     editCourseCredits(Integer.parseInt(ScannerUntils.scanString("Enter new credits")),id);
+                    break;
                 case 5:
                     //Checks if anything changed, if so asks to save
                     running = false;

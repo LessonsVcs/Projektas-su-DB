@@ -23,10 +23,9 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     private PrintTable printTable = new PrintTable();
     private boolean running= true;
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    MenuForLecturer(){
-        Login login = new Login();
-        this.username= login.getUsername();
-        this.myID=getUserID(username);
+    MenuForLecturer(String username){
+        this.username= username;
+        this.myID=getUserID(this.username);
     }
 
     @Override
@@ -114,13 +113,13 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
 
     private void showMyCourses(){
         //Prints out table : ID, Name, Description
-        ResultSet courses = getUserCourses(myID);
+        HashMap<Integer, Course> courses = getUserCourses(myID);
         printTable.printCoursesHeader();
         try {
-            while (courses.next()){
-                printTable.printCoursesList(courses.getString("ID_COURSE"), courses.getString("NAME"),
-                        courses.getString("DESCRIPTION"), format.format(courses.getString("STARTDATE")),
-                        courses.getString("CREDITS"));
+            for (Integer i :courses.keySet()){
+                printTable.printCoursesList(courses.get(i).getID(), courses.get(i).getName(),
+                        courses.get(i).getDescription(), format.format(courses.get(i).getStartDate()),
+                        courses.get(i).getCredits());
 
             }
         } catch (Exception e){
@@ -197,24 +196,35 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
                 break;
             }
             if(courseExist(course_id)){
-                if(isInCourse(myID,Integer.parseInt(course_id))){
-                    String user_id = ScannerUntils.scanString("Enter course id or exir");
-                    if(userExist(user_id)){
-                        Roles userRole= Roles.valueOf(getRole(user_id));
-                        if(userRole!= Roles.ADMIN || userRole!= Roles.LECTURER ){
-                            RelationDB.addToCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
-                            break;
-                        } else {
-                            System.out.println("Can't add models with admin/lecturer role");
-                        }
-                    }
-                } else {
-                    System.out.println("You can't register to not your courses");
-                }
+                registerToCourse(course_id);
                 break;
             } else {
                 System.out.println("Course doesn't exist");
             }
+        }
+    }
+
+    private void registerToCourse(String course_id) {
+        if(isInCourse(myID,Integer.parseInt(course_id))){
+            String user_id = ScannerUntils.scanString("Enter user id or exit");
+            if(userExist(user_id)){
+                Roles userRole= Roles.valueOf(getRole(true,user_id));
+                if(userRole!= Roles.ADMIN && userRole!= Roles.LECTURER ){
+                    if (isInCourse(Integer.parseInt(user_id), Integer.parseInt(course_id))) {
+                        System.out.println("user is already in this course" );
+                    } else {
+                        RelationDB.addToCourse(Integer.parseInt(user_id), Integer.parseInt(course_id));
+                    }
+                    return;
+                } else {
+                    System.out.println("Can't add models with admin/lecturer role");
+                }
+            } else {
+                System.out.println("user doesn't exist");
+            }
+
+        } else {
+            System.out.println("You can't register to not your courses");
         }
     }
 
@@ -239,18 +249,16 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
         this.running = false;
     }
 
-
-
     private void showSelectedCourse(Integer i){
         //Prints out table who goes to course, First name, Last name, Role
-        ResultSet users = getUsersInCourses(i);
-        ResultSet course = getUsersInCourses(i);
+        HashMap<Integer,User> users = getUsersInCourses(i);
+        Course course = getCourseInfo(i);
         try {
-            printTable.printDescription(course.getString("NAME"),course.getString("DESCRIPTION"));
+            printTable.printDescription(course.getName(),course.getDescription());
             printTable.printCourseHeader();
-            while (users.next()) {
-                printTable.printCourse(users.getString("NAME"),
-                        users.getString("LASTNAME"), users.getString("ROLE"));
+            for (Integer j : users.keySet()) {
+                printTable.printCourse(users.get(j).getFirstName(),
+                        users.get(j).getLastName(), users.get(j).getRole().toString());
             }
         } catch (Exception e){
             System.out.println("There's no one in course ");

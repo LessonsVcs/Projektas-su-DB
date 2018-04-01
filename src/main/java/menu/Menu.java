@@ -16,7 +16,7 @@ public class Menu {
         Login login = new Login();
         if (login.loginToSystem()) {
             this.username = login.getUsername();
-            this.role = Roles.valueOf(getRole(username));
+            this.role = Roles.valueOf(getRole(false,username));
             selectMenu();
         }
     }
@@ -24,15 +24,15 @@ public class Menu {
     private void selectMenu(){
         switch (role){
             case ADMIN:
-                MenuForAdmin menuForAdmin = new MenuForAdmin();
+                MenuForAdmin menuForAdmin = new MenuForAdmin(username);
                 menuForAdmin.menu();
                 break;
             case LECTURER:
-                MenuForLecturer menuForLecturer = new MenuForLecturer();
+                MenuForLecturer menuForLecturer = new MenuForLecturer(username);
                 menuForLecturer.menu();
                 break;
             case USER:
-                MenuForUser menuForUser = new MenuForUser();
+                MenuForUser menuForUser = new MenuForUser(username);
                 menuForUser.menu();
                 break;
             default:

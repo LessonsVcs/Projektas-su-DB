@@ -1,6 +1,8 @@
 package dbUtils;
 
+import extras.Roles;
 import models.Course;
+import models.User;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -42,11 +44,10 @@ public class CourseDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
+            removeFromRelation(false,Integer.parseInt(input));
             PreparedStatement statement = con.prepareStatement("DELETE FROM Courses where ID_COURSE = ? ; ");
             statement.setInt(1,Integer.parseInt(input));
             statement.execute();
-            removeFromRelation(false,Integer.parseInt(input));
-            System.out.println("course deleted");
         } catch (SQLException e){
             System.out.println("failed to delete course");
         }
@@ -60,11 +61,12 @@ public class CourseDB {
             PreparedStatement statement = con.prepareStatement("Select ID_COURSE FROM Courses where ID_COURSE = ? ; ");
             statement.setInt(1,Integer.parseInt(input));
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.getInt("ID_COURSE") >=1){
+            resultSet.next();
+            if(resultSet.getInt("ID_COURSE") >0){
                 value = true;
             }
         } catch (SQLException e){
-            //return false;
+//            e.printStackTrace();
         }
         return value;
     }
@@ -83,7 +85,7 @@ public class CourseDB {
             statement.execute();
 
         } catch (Exception e){
-            e.printStackTrace();
+            System.out.println("failed to create course");
         }
     }
 
@@ -96,7 +98,7 @@ public class CourseDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("failed to update course");
         }
     }
 
@@ -109,7 +111,7 @@ public class CourseDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("failed to update course");
         }
     }
 
@@ -122,7 +124,7 @@ public class CourseDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("failed to update course");
 
         }
 
@@ -148,44 +150,52 @@ public class CourseDB {
                 courseHashMap.put(counter++,course);
             }
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println("failed to update course");
         }
         return courseHashMap;
     }
 
-    public static ResultSet getUsersInCourses(int courseID){
-        ResultSet resultSet;
+    public static HashMap getUsersInCourses(int courseID){
+        HashMap<Integer,User> userHashMap = new HashMap<>();
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("SELECT ID, NAME, LASTNAME, ROLE from COURSERELATION " +
                     "JOIN USERS ON  ID_USER = ID where ID_COURSE = ?");
             statement.setInt(1,courseID);
-            resultSet = statement.executeQuery();
-            return resultSet;
-
+            ResultSet resultSet = statement.executeQuery();
+            int counter = 0;
+            while (resultSet.next()) {
+                User user = new User();
+                user.setID(String.valueOf(resultSet.getInt("ID")));
+                user.setFirstName(resultSet.getString("NAME"));
+                user.setLastName(resultSet.getString("LASTNAME"));
+                user.setRole(Roles.valueOf(resultSet.getString("ROLE")));
+                userHashMap.put(counter++,user);
+            }
         } catch (Exception e){
-            System.out.println(e);
-            return null;
+            System.out.println("failed to get users in course");
         }
+        return userHashMap;
     }
 
-    public static ResultSet getCourseInfo(int courseID){
-        ResultSet resultSet;
+    public static Course getCourseInfo(int courseID){
+        Course course = new Course();
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
 
-            PreparedStatement statement = con.prepareStatement("SELECT NAME, DESCRIPTION  from COURSES  " +
+            PreparedStatement statement = con.prepareStatement("SELECT NAME, DESCRIPTION from COURSES  " +
                     "WHERE ID_COURSE = ?");
             statement.setInt(1,courseID);
-            resultSet = statement.executeQuery();
-            return resultSet;
-
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            course.setName(resultSet.getString("NAME"));
+            course.setDescription(resultSet.getString("DESCRIPTION"));
         } catch (Exception e){
-            System.out.println(e);
-            return null;
+            System.out.println("failed to get course info");
         }
+        return course;
     }
 
     public static int getCourseID(String name){
@@ -199,7 +209,7 @@ public class CourseDB {
             return resultSet.getInt("ID_COURSE");
 
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println("course doesn't exist");
             return 0;
         }
     }
@@ -215,7 +225,7 @@ public class CourseDB {
             return convertToUtilDate(resultSet.getDate("STARTDATE"));
 
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println("failed to get date");
             return null;
         }
     }
@@ -245,7 +255,7 @@ public class CourseDB {
             statement.setInt(2,id);
             statement.execute();
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("failed to update course");
         }
     }
 
