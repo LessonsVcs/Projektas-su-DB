@@ -64,6 +64,40 @@ public class RelationDB {
         }
     }
 
+    public static boolean isInCourse(int user_id, int user_course){
+
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT * FROM COURSERELATION " +
+                    "WHERE ID_USER  = ? AND ID_COURSE = ? ; ");
+            statement.setInt(1,user_id);
+            statement.setInt(2,user_course);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return true;
+        } catch (SQLException e){
+            return false;
+        }
+    }
+
+    public static ResultSet getUserCourses(int user_id){
+        ResultSet resultSet;
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT ID_COURSE, NAME, DESCRIPTION, STARTDATE, CREDITS" +
+                    " From COURSERELATION JOIN COURSES ON COURSERELATION.ID_COURSE = COURSES.ID_COURSE WHERE ID_USER = ?");
+            statement.setInt(1,user_id);
+            resultSet = statement.executeQuery();
+            return resultSet;
+
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
 
 
 }

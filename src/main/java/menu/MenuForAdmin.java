@@ -2,13 +2,9 @@ package menu;
 
 import cources.Course;
 import cources.ReadWriteCourseFile;
-import cources.ReadWriteCourseRelation;
-import menu.extras.dbUtils.DBUtils;
-import menu.extras.dbUtils.UserDB;
 import user.EditUserMenu;
 import user.User;
 import menu.extras.*;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -16,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static menu.extras.dbUtils.CourseDB.*;
-import static menu.extras.dbUtils.DBUtils.*;
-import static menu.extras.UpdateLists.*;
 import static menu.extras.dbUtils.RelationDB.addToCourse;
 import static menu.extras.dbUtils.RelationDB.removeFromCourse;
 import static menu.extras.dbUtils.UserDB.*;
@@ -25,7 +19,6 @@ import static menu.extras.dbUtils.UserDB.*;
 public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterface {
     private String myID;
     private boolean running = true;
-    private HashMap<Integer,List<String>> courseRealtions = new HashMap<>();
     private HashMap<Integer, Course> courses= new HashMap();
     private HashMap<Integer, User> users = new HashMap();
     private PrintTable printTable = new PrintTable();
@@ -306,10 +299,6 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     @Override
     public void showCourse() {
-        this.courses = updateCourses();
-        this.users   = updateUsers();
-
-        boolean courseFound =  false;
         while (true) {
             String input = ScannerUntils.scanString("Enter course id or exit");
             if (input.equalsIgnoreCase("exit")){

@@ -22,23 +22,20 @@ public class UserDB {
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
             PreparedStatement statement = con.prepareStatement("INSERT INTO Users (Name,LastName,Password,Username,Role) " +
-                    "VALUES (?,?,?,?,?); ", Statement.RETURN_GENERATED_KEYS);
+                    "VALUES (?,?,?,?,?); ");
             statement.setString(1,name);
             statement.setString(2,lastName);
             statement.setString(3,password);
             statement.setString(4,userName);
             statement.setString(5,role.toString());
-
-            //statement.execute();
-            statement.executeUpdate();
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                long id = generatedKeys.getLong(1);
-                System.out.println(id);
-            } else {
-                System.out.println("Error on retrieving ID");
-            }
-
+            statement.execute();
+//            ResultSet generatedKeys = statement.getGeneratedKeys();
+//            if (generatedKeys.next()) {
+//                long id = generatedKeys.getLong(1);
+//                System.out.println(id);
+//            } else {
+//                System.out.println("Error on retrieving ID");
+//            }
         } catch (Exception e){
             System.out.println(e);
         }
@@ -259,5 +256,18 @@ public class UserDB {
         }
     }
 
+    public static int getUserID(String username){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT ID from Users where username = ? ; ");
+            statement.setString(1,username);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("ID");
+        } catch (SQLException e){
+            return 0;
+        }
+    }
 
 }

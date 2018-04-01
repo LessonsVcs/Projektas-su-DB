@@ -5,18 +5,15 @@ import menu.extras.ScannerUntils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Scanner;
+
+
+import static menu.extras.dbUtils.UserDB.*;
 
 public class EditProfile {
-    private HashMap<Integer, User> users;
 
-    public void menu(Integer id, HashMap<Integer, User> users){
-        this.users = users;
+    public void menu(Integer id){
         boolean running = true;
-        boolean changes = false;
-        Scanner scanner = new Scanner(System.in);
 
         while (running){
             System.out.println("Select what to edit");
@@ -26,35 +23,25 @@ public class EditProfile {
             String input = ScannerUntils.scanString("");
             switch (Integer.parseInt(input)){
                 case 1:
-                    users.get(id).setFirstName(ScannerUntils.scanString("Enter new name"));
-                    changes= true;
+                    editUserName(ScannerUntils.scanString("Enter new name"),id);
                     break;
                 case 2:
-                    users.get(id).setLastName(ScannerUntils.scanString("Enter new last name"));
-                    changes= true;
+                    editUserLastname(ScannerUntils.scanString("Enter new last name"),id);
                     break;
                 case 3:
-                    users.get(id).setPassword(ScannerUntils.scanString("Enter new password"));
-                    changes= true;
+                    editUserPassword(ScannerUntils.scanString("Enter new password"),id);
                     break;
                 case 4:
-                    setDateOfBirth(id, users);
-                    changes= true;
+                    setDateOfBirth(id);
                     break;
                 case 5:
-                    users.get(id).setEmail(ScannerUntils.scanString("Enter new  email"));
-                    changes= true;
+                    editUserEmail(ScannerUntils.scanString("Enter new  email"),id);
                     break;
                 case 6:
-                    users.get(id).setAddress(ScannerUntils.scanString("Enter new address"));
-                    changes = true;
+                    editUserAddress(ScannerUntils.scanString("Enter new address"),id);
                     break;
                 case 7:
-                    if(changes){
-                        running = saveUsers(users);
-                    } else {
-                        running = false;
-                    }
+                    running = false;
                     break;
 
                 default:
@@ -63,34 +50,12 @@ public class EditProfile {
         }
     }
 
-    private boolean saveUsers(HashMap<Integer, User> users) {
-        boolean running;
-        while (true){
-            String response = ScannerUntils.scanString("Changes are made, do you want to save? Yes/No");
-            if (response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")){
-                running = false;
-                if (response.equalsIgnoreCase("yes")){
-                    ReadWriteUserFile readWriteUserFile = new ReadWriteUserFile();
-                    readWriteUserFile.setUsers(users);
-                    readWriteUserFile.writeUserFile();
-                    break;
-                } else {
-                    break;
-                }
-            }
-            else {
-                System.out.println("wrong input");
-            }
-        }
-        return running;
-    }
-
-    private void setDateOfBirth(Integer id, HashMap<Integer, User> users) {
+    private void setDateOfBirth(Integer id) {
         while (true){
             try {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 Date date = format.parse(ScannerUntils.scanString("enter new birth date. Year-Month-day Ex: 2000-10-10"));
-                users.get(id).setDateOfBirth(date);
+                editUserDate(date,id);
                 break;
             }catch (Exception e){
                 System.out.println("wrong input");

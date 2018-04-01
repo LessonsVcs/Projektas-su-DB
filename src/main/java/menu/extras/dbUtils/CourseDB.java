@@ -126,6 +126,7 @@ public class CourseDB {
             return null;
         }
     }
+
     public static ResultSet getUsersInCourses(int courseID){
         ResultSet resultSet;
         try (
@@ -142,6 +143,7 @@ public class CourseDB {
             return null;
         }
     }
+
     public static ResultSet getCourseInfo(int courseID){
         ResultSet resultSet;
         try (
@@ -157,6 +159,22 @@ public class CourseDB {
         } catch (Exception e){
             System.out.println(e);
             return null;
+        }
+    }
+
+    public static int getCourseID(String name){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT ID_COURSE from Courses where NAME = ?; ");
+            statement.setString(1,name);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("ID_COURSE");
+
+        } catch (Exception e){
+            System.out.println(e);
+            return 0;
         }
     }
 
