@@ -270,4 +270,20 @@ public class UserDB {
         }
     }
 
+    public static int getUserCredits(int ID){
+
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT sum(CREDITS) FROM COURSES " +
+                    "join COURSERELATION on COURSERELATION .ID_COURSE = COURSES .ID_COURSE where ID_USER  = ?; ");
+            statement.setInt(1,ID);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("SUM(CREDITS)");
+        } catch (SQLException e){
+            return 0;
+        }
+    }
+
 }

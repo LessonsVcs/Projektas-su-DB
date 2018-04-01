@@ -116,6 +116,16 @@ public class DBUtils {
         return sqlDate;
     }
 
+    public static java.util.Date convertToUtilDate(Date in){
+        java.util.Date utilDate;
+        try {
+            utilDate = Date.valueOf(format.format(in));
+        }catch (Exception e){
+            utilDate  = null;
+        }
+
+        return utilDate;
+    }
 
 
 }

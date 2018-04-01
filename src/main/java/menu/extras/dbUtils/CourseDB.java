@@ -3,9 +3,11 @@ package menu.extras.dbUtils;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import static menu.extras.dbUtils.DBUtils.convertToMysqlDate;
+import static menu.extras.dbUtils.DBUtils.convertToUtilDate;
 import static menu.extras.dbUtils.RelationDB.removeFromRelation;
 
 public class CourseDB {
@@ -30,7 +32,7 @@ public class CourseDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
-            PreparedStatement statement = con.prepareStatement("DELETE FROM Courses where ID = ? ; ");
+            PreparedStatement statement = con.prepareStatement("DELETE FROM Courses where ID_COURSE = ? ; ");
             statement.setInt(1,Integer.parseInt(input));
             statement.execute();
             removeFromRelation(false,Integer.parseInt(input));
@@ -75,7 +77,7 @@ public class CourseDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
-            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET name = ? WHERE ID = ?; ");
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET name = ? WHERE ID_COURSE = ?; ");
             statement.setString(1,input);
             statement.setInt(2,id);
             statement.execute();
@@ -88,7 +90,7 @@ public class CourseDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
-            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET DESCRIPTION = ? WHERE ID = ?; ");
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET DESCRIPTION = ? WHERE ID_COURSE = ?; ");
             statement.setString(1,input);
             statement.setInt(2,id);
             statement.execute();
@@ -101,7 +103,7 @@ public class CourseDB {
         try (
                 Connection con = DriverManager.getConnection(urlOfDB,login,login)
         ){
-            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET STARTDATE = ? WHERE ID = ?; ");
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET STARTDATE = ? WHERE ID_COURSE = ?; ");
             statement.setDate(1,convertToMysqlDate(input));
             statement.setInt(2,id);
             statement.execute();
@@ -175,6 +177,51 @@ public class CourseDB {
         } catch (Exception e){
             System.out.println(e);
             return 0;
+        }
+    }
+
+    public static Date getCourseStartDate(int course_id){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT STARTDATE from Courses where ID_COURSE = ?; ");
+            statement.setInt(1,course_id);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return convertToUtilDate(resultSet.getDate("STARTDATE"));
+
+        } catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    public static int getCourseCredits(int ID){
+
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT CREDITS FROM COURSES " +
+                    "where ID_COURSE  = ?; ");
+            statement.setInt(1,ID);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("CREDITS");
+        } catch (SQLException e){
+            return 0;
+        }
+    }
+
+    public static void editCourseCredits(int credits, Integer id){
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("UPDATE Courses SET CREDITS = ? WHERE ID_COURSE = ?; ");
+            statement.setInt(1,credits);
+            statement.setInt(2,id);
+            statement.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
         }
     }
 

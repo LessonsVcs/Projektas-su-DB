@@ -1,5 +1,7 @@
 package menu.extras.dbUtils;
 
+import menu.extras.Roles;
+
 import java.sql.*;
 
 public class RelationDB {
@@ -95,6 +97,26 @@ public class RelationDB {
         } catch (Exception e){
             System.out.println(e);
             return null;
+        }
+    }
+
+
+    public static boolean lecturerInCourse ( int user_course){
+
+        try (
+                Connection con = DriverManager.getConnection(urlOfDB,login,login)
+        ){
+            PreparedStatement statement = con.prepareStatement("SELECT role FROM USERS " +
+                    "join COURSERELATION on ID_USER  = ID where ID_COURSE = ? ; ");
+            statement.setInt(1,user_course);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next())
+                if (Roles.valueOf(resultSet.getString("ROLE")) == Roles.LECTURER){
+                    return true;
+                }
+            return false;
+        } catch (SQLException e){
+            return false;
         }
     }
 

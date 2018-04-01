@@ -1,8 +1,8 @@
 package menu;
 
 import cources.Course;
-import cources.ReadWriteCourseFile;
 import user.EditUserMenu;
+import user.Login;
 import user.User;
 import menu.extras.*;
 import java.sql.ResultSet;
@@ -17,13 +17,14 @@ import static menu.extras.dbUtils.RelationDB.removeFromCourse;
 import static menu.extras.dbUtils.UserDB.*;
 
 public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterface {
-    private String myID;
+    private String username;
+    private int myID;
     private boolean running = true;
-    private HashMap<Integer, Course> courses= new HashMap();
-    private HashMap<Integer, User> users = new HashMap();
     private PrintTable printTable = new PrintTable();
     MenuForAdmin(){
-        this.myID=myID;
+        Login login = new Login();
+        this.username= login.getUsername();
+        this.myID=getUserID(username);
     }
 
     public void menu(){
@@ -406,7 +407,6 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private void editCourseMenu(Integer id){
 
-        boolean changes = false;
         boolean running = true;
         //Menu for editing course
         while (running){
@@ -423,16 +423,10 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                     changeDate(id);
                     break;
                 case 4:
-                    courses.get(id).setCredits(ScannerUntils.scanString("Enter new credits"));
-                    changes= true;
+                    editCourseCredits(Integer.parseInt(ScannerUntils.scanString("Enter new credits")),id);
                 case 5:
                     //Checks if anything changed, if so asks to save
-                    if (changes){
-                        running = toSaveCourseChanges();
-                    } else {
-                      running = false;
-
-                    }
+                    running = false;
                     break;
                 default:
                     System.out.println("Wrong input");
@@ -448,29 +442,6 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         } else {
             editCourseName(name,id);
         }
-    }
-
-    private boolean toSaveCourseChanges() {
-        //Asks if user wants to save changes
-        boolean running;
-        while (true){
-            String response = ScannerUntils.scanString("Changes are made, do you want to save? Yes/No");
-            if (response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")){
-                running = false;
-                if (response.equalsIgnoreCase("yes")){
-                    ReadWriteCourseFile readWriteCourseFile = new ReadWriteCourseFile();
-                    readWriteCourseFile.setCourses(courses);
-                    readWriteCourseFile.writeCourseFile();
-                    break;
-                } else {
-                    break;
-                }
-            }
-            else {
-                System.out.println("wrong input");
-            }
-        }
-        return running;
     }
 
     private void changeDate(Integer id) {
