@@ -7,5 +7,4 @@ public interface UserInterface {
     abstract void menu();
     abstract void exit();
 
-
 }
