@@ -9,7 +9,8 @@ public class DBUtils {
     private static final String urlOfDB = "jdbc:h2:~/projektinis6";
     private static final String login = "admin";
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    public static void initDriver(){
+
+    public static void initDriver() {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
@@ -20,8 +21,8 @@ public class DBUtils {
     public static void initDB() {
 
         try (
-                Connection con = DriverManager.getConnection(urlOfDB,login,login)
-        ){
+                Connection con = DriverManager.getConnection(urlOfDB, login, login)
+        ) {
             //firstName, lastName, password, username, role, email, dateOfBirth, address, personalNumber
             //dropTables(con);
 
@@ -33,13 +34,12 @@ public class DBUtils {
                     "VALUES ('admin','admin','admin','admin','ADMIN'); ");
             try {
                 statement.execute();
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
 
-
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -48,19 +48,19 @@ public class DBUtils {
         try {
             PreparedStatement drop = con.prepareStatement("DROP TABLE users");
             drop.execute();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
         try {
             PreparedStatement drop2 = con.prepareStatement("DROP TABLE Courses");
             drop2.execute();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
         try {
             PreparedStatement drop2 = con.prepareStatement("DROP TABLE CourseRelation");
             drop2.execute();
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -103,23 +103,23 @@ public class DBUtils {
         statement.execute();
     }
 
-    public static Date convertToMysqlDate(java.util.Date in){
+    public static Date convertToMysqlDate(java.util.Date in) {
         Date sqlDate;
         try {
             sqlDate = Date.valueOf(format.format(in));
-        }catch (Exception e){
-            sqlDate  = null;
+        } catch (Exception e) {
+            sqlDate = null;
         }
 
         return sqlDate;
     }
 
-    public static java.util.Date convertToUtilDate(Date in){
+    public static java.util.Date convertToUtilDate(Date in) {
         java.util.Date utilDate;
         try {
             utilDate = Date.valueOf(format.format(in));
-        }catch (Exception e){
-            utilDate  = null;
+        } catch (Exception e) {
+            utilDate = null;
         }
 
         return utilDate;

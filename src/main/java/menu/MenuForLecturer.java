@@ -1,31 +1,29 @@
 package menu;
 
-import models.Course;
 import dbUtils.RelationDB;
-import models.Login;
 import extras.*;
+import models.Course;
 import models.User;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+
 import static dbUtils.CourseDB.*;
-import static dbUtils.RelationDB.addToCourse;
-import static dbUtils.RelationDB.getUserCourses;
-import static dbUtils.RelationDB.isInCourse;
+import static dbUtils.RelationDB.*;
 import static dbUtils.UserDB.*;
 
-public class MenuForLecturer  implements LecturerInterface,UserInterface {
+public class MenuForLecturer implements LecturerInterface, UserInterface {
     private int myID;
     private String username;
     private PrintTable printTable = new PrintTable();
-    private boolean running= true;
+    private boolean running = true;
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    MenuForLecturer(String username){
-        this.username= username;
-        this.myID=getUserID(this.username);
+
+    MenuForLecturer(String username) {
+        this.username = username;
+        this.myID = getUserID(this.username);
     }
 
     @Override
@@ -33,14 +31,14 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
         while (running) {
             System.out.println("Select option");
             System.out.println("1) edit my profile      2) edit my courses     3) View all courses      \n" +
-                               "4) Create course        5) View users          6) Register to course    \n" +
-                               "7) Show course          8) Show my courses     9) Exit                  \n" );
+                    "4) Create course        5) View users          6) Register to course    \n" +
+                    "7) Show course          8) Show my courses     9) Exit                  \n");
             selectOperation(Integer.parseInt(ScannerUntils.scanString("")));
         }
     }
 
     private void selectOperation(int option) {
-        switch (option){
+        switch (option) {
             case 1:
                 editUser();
                 break;
@@ -84,9 +82,9 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     public void editCourses() {
         while (true) {
             String course_id = ScannerUntils.scanString("Enter course id");
-            if(courseExist(course_id)){
+            if (courseExist(course_id)) {
                 String user_id = ScannerUntils.scanString("Enter course id");
-                if(isInCourse(Integer.parseInt(user_id),Integer.parseInt(course_id))) {
+                if (isInCourse(Integer.parseInt(user_id), Integer.parseInt(course_id))) {
                     editCourseMenu(Integer.parseInt(course_id));
                 } else {
                     System.out.println("You can't edit this course");
@@ -105,24 +103,24 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
         HashMap<Integer, Course> courseHashMap = getCourses();
         printTable.printCoursesHeader();
         for (Integer i : courseHashMap.keySet()) {
-            printTable.printCoursesList(courseHashMap.get(i).getID(),courseHashMap.get(i).getName(),
+            printTable.printCoursesList(courseHashMap.get(i).getID(), courseHashMap.get(i).getName(),
                     courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
                     courseHashMap.get(i).getCredits());
         }
     }
 
-    private void showMyCourses(){
+    private void showMyCourses() {
         //Prints out table : ID, Name, Description
         HashMap<Integer, Course> courses = getUserCourses(myID);
         printTable.printCoursesHeader();
         try {
-            for (Integer i :courses.keySet()){
+            for (Integer i : courses.keySet()) {
                 printTable.printCoursesList(courses.get(i).getID(), courses.get(i).getName(),
                         courses.get(i).getDescription(), format.format(courses.get(i).getStartDate()),
                         courses.get(i).getCredits());
 
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -131,29 +129,29 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     public void addCourse() {
         Course newCourse = new Course();
         newCourse = creatingNewCourse(newCourse);
-        newCourseDB(newCourse.getName(),newCourse.getDescription(),newCourse.getStartDate(),newCourse.getCredits());
-        addToCourse(myID,getCourseID(newCourse.getName()));
+        newCourseDB(newCourse.getName(), newCourse.getDescription(), newCourse.getStartDate(), newCourse.getCredits());
+        addToCourse(myID, getCourseID(newCourse.getName()));
     }
 
     private Course creatingNewCourse(Course newCourse) {
         String name;
-        while (true){
+        while (true) {
             name = ScannerUntils.scanString("Enter course name or 'exit' to leave");
-            if (name.equalsIgnoreCase("exit")){
+            if (name.equalsIgnoreCase("exit")) {
             }
-            if(courseNameExist(name)){
+            if (courseNameExist(name)) {
                 System.out.println("This name is already exist");
             } else {
                 newCourse.setName(name);
                 break;
             }
         }
-        while (true){
+        while (true) {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             try {
                 newCourse.setStartDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")));
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Wrong format");
             }
         }
@@ -192,10 +190,10 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     public void register() {
         while (true) {
             String course_id = ScannerUntils.scanString("Enter course id or exir");
-            if(course_id.equalsIgnoreCase("exit")){
+            if (course_id.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(course_id)){
+            if (courseExist(course_id)) {
                 registerToCourse(course_id);
                 break;
             } else {
@@ -205,13 +203,13 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     }
 
     private void registerToCourse(String course_id) {
-        if(isInCourse(myID,Integer.parseInt(course_id))){
+        if (isInCourse(myID, Integer.parseInt(course_id))) {
             String user_id = ScannerUntils.scanString("Enter user id or exit");
-            if(userExist(user_id)){
-                Roles userRole= Roles.valueOf(getRole(true,user_id));
-                if(userRole!= Roles.ADMIN && userRole!= Roles.LECTURER ){
+            if (userExist(user_id)) {
+                Roles userRole = Roles.valueOf(getRole(true, user_id));
+                if (userRole != Roles.ADMIN && userRole != Roles.LECTURER) {
                     if (isInCourse(Integer.parseInt(user_id), Integer.parseInt(course_id))) {
-                        System.out.println("user is already in this course" );
+                        System.out.println("user is already in this course");
                     } else {
                         RelationDB.addToCourse(Integer.parseInt(user_id), Integer.parseInt(course_id));
                     }
@@ -232,13 +230,13 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
     public void showCourse() {
         while (true) {
             String input = ScannerUntils.scanString("Enter course id or exit");
-            if (input.equalsIgnoreCase("exit")){
+            if (input.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(input)){
+            if (courseExist(input)) {
                 showSelectedCourse(Integer.parseInt(input));
                 break;
-            }else {
+            } else {
                 System.out.println("Course doesn't exist");
             }
         }
@@ -249,33 +247,33 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
         this.running = false;
     }
 
-    private void showSelectedCourse(Integer i){
+    private void showSelectedCourse(Integer i) {
         //Prints out table who goes to course, First name, Last name, Role
-        HashMap<Integer,User> users = getUsersInCourses(i);
+        HashMap<Integer, User> users = getUsersInCourses(i);
         Course course = getCourseInfo(i);
         try {
-            printTable.printDescription(course.getName(),course.getDescription());
+            printTable.printDescription(course.getName(), course.getDescription());
             printTable.printCourseHeader();
             for (Integer j : users.keySet()) {
                 printTable.printCourse(users.get(j).getFirstName(),
                         users.get(j).getLastName(), users.get(j).getRole().toString());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("There's no one in course ");
         }
     }
 
-    private void editCourseMenu(Integer id){
+    private void editCourseMenu(Integer id) {
         boolean running = true;
         //Menu for editing course
-        while (running){
+        while (running) {
             String input = ScannerUntils.scanString("1) Change name 2) Change description 3) Change start Date 4) Exit");
-            switch (Integer.parseInt(input)){
+            switch (Integer.parseInt(input)) {
                 case 1:
-                    editCourseName(ScannerUntils.scanString("Enter new name"),id);
+                    editCourseName(ScannerUntils.scanString("Enter new name"), id);
                     break;
                 case 2:
-                    editCourseDescription(ScannerUntils.scanString("Enter new course description"),id);
+                    editCourseDescription(ScannerUntils.scanString("Enter new course description"), id);
                     break;
                 case 3:
                     changeDate(id);
@@ -290,12 +288,12 @@ public class MenuForLecturer  implements LecturerInterface,UserInterface {
 
     }
 
-    private void changeDate(Integer id ) {
-        while (true){
+    private void changeDate(Integer id) {
+        while (true) {
             try {
-                editCourseDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")),id);
+                editCourseDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")), id);
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Wrong format");
             }
         }

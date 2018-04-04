@@ -2,7 +2,6 @@ package models;
 
 import extras.ScannerUntils;
 
-
 import static dbUtils.UserDB.checkUsername;
 
 public class Login {

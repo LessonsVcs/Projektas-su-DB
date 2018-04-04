@@ -5,18 +5,19 @@ import extras.Roles;
 import java.util.Date;
 
 public class User {
-    private String      ID ;
-    private Roles       role;
-    private String      firstName;
-    private String      lastName;
-    private String      password;
-    private String      username;
-    private Date        dateOfBirth;
-    private String      email;
-    private String      address;
+    private String ID;
+    private Roles role;
+    private String firstName;
+    private String lastName;
+    private String password;
+    private String username;
+    private Date dateOfBirth;
+    private String email;
+    private String address;
 
 
-    public User(){}
+    public User() {
+    }
 
     public Roles getRole() {
         return role;

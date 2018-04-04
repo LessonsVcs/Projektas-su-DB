@@ -1,8 +1,7 @@
 package menu;
 
-import models.Login;
 import extras.Roles;
-
+import models.Login;
 
 import static dbUtils.UserDB.getRole;
 
@@ -12,17 +11,17 @@ public class Menu {
     private Roles role;
 
 
-    public void selectionMenu(){
+    public void selectionMenu() {
         Login login = new Login();
         if (login.loginToSystem()) {
             this.username = login.getUsername();
-            this.role = Roles.valueOf(getRole(false,username));
+            this.role = Roles.valueOf(getRole(false, username));
             selectMenu();
         }
     }
 
-    private void selectMenu(){
-        switch (role){
+    private void selectMenu() {
+        switch (role) {
             case ADMIN:
                 MenuForAdmin menuForAdmin = new MenuForAdmin(username);
                 menuForAdmin.menu();

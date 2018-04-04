@@ -1,34 +1,34 @@
 package menu;
 
+import extras.*;
 import models.Course;
 import models.Login;
 import models.User;
-import extras.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
 import static dbUtils.CourseDB.*;
-import static dbUtils.RelationDB.addToCourse;
-import static dbUtils.RelationDB.isInCourse;
-import static dbUtils.RelationDB.removeFromCourse;
+import static dbUtils.RelationDB.*;
 import static dbUtils.UserDB.*;
 
-public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterface {
+public class MenuForAdmin implements AdminInterface, LecturerInterface, UserInterface {
     private String username;
     private int myID;
     private boolean running = true;
     private PrintTable printTable = new PrintTable();
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-    MenuForAdmin(String username){
+
+    MenuForAdmin(String username) {
         Login login = new Login();
-        this.username= login.getUsername();
-        this.myID=getUserID(this.username);
+        this.username = login.getUsername();
+        this.myID = getUserID(this.username);
     }
 
-    public void menu(){
+    public void menu() {
         //Menu for selecting operation
         while (running) {
             System.out.println("Select option");
@@ -48,7 +48,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private void selectOperation(String selected) {
         //Selecting operation from menu
-        switch (Integer.parseInt(selected)){
+        switch (Integer.parseInt(selected)) {
             case 1:
                 createUser();
                 break;
@@ -101,13 +101,13 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         User newUser = new User();
         String input = ScannerUntils.scanString("Create simple models? Yes/No or exit");
         //Create models simple or express. Simple doesn't have: email, dateOfBirth, address,
-        if (input.equalsIgnoreCase("exit")){
+        if (input.equalsIgnoreCase("exit")) {
             return;
-        }else {
+        } else {
             if (input.equalsIgnoreCase("yes")) {
                 //Check if username is free
                 newUser = basicUserCreation(newUser);
-                newUserToDB(newUser.getFirstName(),newUser.getLastName(),newUser.getPassword(),
+                newUserToDB(newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(),
                         newUser.getUsername(), newUser.getRole());
 
             } else if (input.equalsIgnoreCase("no")) {
@@ -115,7 +115,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
                 newUser.setEmail(ScannerUntils.scanString("enter email"));
                 newUser.setAddress(ScannerUntils.scanString("enter address"));
                 newUser.setDateOfBirth(getBirthDate());
-                newUserToDBexpress(newUser.getFirstName(),newUser.getLastName(),newUser.getPassword(),
+                newUserToDBexpress(newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(),
                         newUser.getUsername(), newUser.getRole(), newUser.getEmail(), newUser.getDateOfBirth(), newUser.getAddress());
             } else {
                 System.out.println("wrong input");
@@ -138,10 +138,10 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private String getUsername() {
         String username;
-        while (true){
+        while (true) {
             System.out.println();
             username = ScannerUntils.scanString("enter username");
-            if(checkUsername(username)!=null){
+            if (checkUsername(username) != null) {
                 System.out.println("this username is already taken");
             } else {
                 break;
@@ -152,18 +152,18 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private Roles getRoles() {
         Roles role = Roles.USER;
-        while (true){
+        while (true) {
             System.out.println();
             String tmp = ScannerUntils.scanString("enter role (admin/lecturer/user)");
-            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
-                    tmp.equalsIgnoreCase("lecturer")){
-                if(tmp.equalsIgnoreCase("admin")){
+            if (tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
+                    tmp.equalsIgnoreCase("lecturer")) {
+                if (tmp.equalsIgnoreCase("admin")) {
                     role = Roles.ADMIN;
                 }
-                if(tmp.equalsIgnoreCase("lecturer")){
+                if (tmp.equalsIgnoreCase("lecturer")) {
                     role = Roles.LECTURER;
                 }
-                if(tmp.equalsIgnoreCase("user")){
+                if (tmp.equalsIgnoreCase("user")) {
                     role = Roles.USER;
                 }
                 break;
@@ -176,12 +176,12 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private Date getBirthDate() {
         Date dateOfBirth;
-        while (true){
+        while (true) {
             try {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 dateOfBirth = format.parse(ScannerUntils.scanString("enter new birth date. Year-Month-day Ex: 2000-10-10"));
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("wrong input");
             }
         }
@@ -193,29 +193,29 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         Course newCourse = new Course();
         newCourse = creatingNewCourse(newCourse);
 
-        newCourseDB(newCourse.getName(),newCourse.getDescription(),newCourse.getStartDate(),newCourse.getCredits());
+        newCourseDB(newCourse.getName(), newCourse.getDescription(), newCourse.getStartDate(), newCourse.getCredits());
     }
 
     private Course creatingNewCourse(Course newCourse) {
         String name;
-        while (true){
+        while (true) {
             //checks if course name already exists
             name = ScannerUntils.scanString("Enter course name or 'exit' to leave");
-            if (name.equalsIgnoreCase("exit")){
+            if (name.equalsIgnoreCase("exit")) {
             }
-            if(courseNameExist(name)){
+            if (courseNameExist(name)) {
                 System.out.println("This name is already exist");
             } else {
                 newCourse.setName(name);
                 break;
             }
         }
-        while (true){
+        while (true) {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             try {
                 newCourse.setStartDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")));
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Wrong format");
             }
         }
@@ -240,10 +240,10 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     public void deleteCourse() {
         while (true) {
             String input = ScannerUntils.scanString("Enter course id or exit");
-            if (input.equalsIgnoreCase("exit")){
+            if (input.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(input)){
+            if (courseExist(input)) {
                 deleteCourseDB(input);
                 break;
             } else {
@@ -256,7 +256,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     public void deleteUser() {
         String input = ScannerUntils.scanString("Enter user id");
         //Checks if user with that ID exist and removes
-        if (userExist(input)){
+        if (userExist(input)) {
             deleteUserDB(input);
         } else {
             System.out.println("user doesn't exist");
@@ -270,14 +270,14 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         while (true) {
             String input = ScannerUntils.scanString("Enter user id or exit");
             //Checks if user exits
-            if (input.equalsIgnoreCase("exit")){
+            if (input.equalsIgnoreCase("exit")) {
                 break;
             }
 
-            if(userExist(input)){
+            if (userExist(input)) {
                 editUserMenu.menu(Integer.parseInt(input));
                 break;
-            }else {
+            } else {
                 System.out.println("user doesn't exist");
             }
         }
@@ -291,7 +291,7 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         HashMap<Integer, Course> courseHashMap = getCourses();
         printTable.printCoursesHeader();
         for (Integer i : courseHashMap.keySet()) {
-            printTable.printCoursesList(courseHashMap.get(i).getID(),courseHashMap.get(i).getName(),
+            printTable.printCoursesList(courseHashMap.get(i).getID(), courseHashMap.get(i).getName(),
                     courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
                     courseHashMap.get(i).getCredits());
         }
@@ -301,30 +301,30 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     public void showCourse() {
         while (true) {
             String input = ScannerUntils.scanString("Enter course id or exit");
-            if (input.equalsIgnoreCase("exit")){
+            if (input.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(input)){
+            if (courseExist(input)) {
                 showSelectedCourse(Integer.parseInt(input));
                 break;
-            }else {
+            } else {
                 System.out.println("Course doesn't exist");
             }
         }
     }
 
-    private void showSelectedCourse(Integer i){
+    private void showSelectedCourse(Integer i) {
         //Prints out table who goes to course, First name, Last name, Role
-        HashMap<Integer,User> users = getUsersInCourses(i);
+        HashMap<Integer, User> users = getUsersInCourses(i);
         Course course = getCourseInfo(i);
         try {
-            printTable.printDescription(course.getName(),course.getDescription());
+            printTable.printDescription(course.getName(), course.getDescription());
             printTable.printCourseHeader();
             for (Integer j : users.keySet()) {
                 printTable.printCourse(users.get(j).getFirstName(),
                         users.get(j).getLastName(), users.get(j).getRole().toString());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("There's no one in course ");
         }
     }
@@ -333,13 +333,13 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
     public void register() {
         while (true) {
             String course_id = ScannerUntils.scanString("Enter course id or exit");
-            if (course_id.equalsIgnoreCase("exit")){
+            if (course_id.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(course_id)){
+            if (courseExist(course_id)) {
                 String user_id = ScannerUntils.scanString("Enter user id or exit");
-                if(userExist(user_id)){
-                    addToCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
+                if (userExist(user_id)) {
+                    addToCourse(Integer.parseInt(user_id), Integer.parseInt(course_id));
                 } else {
                     System.out.println("user doesn't exist");
                 }
@@ -356,20 +356,20 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
         String course_id = ScannerUntils.scanString("Enter course id");
 
-        if(courseExist(course_id)){
+        if (courseExist(course_id)) {
             while (true) {
                 String user_id = ScannerUntils.scanString("Enter person id or exit");
-                if (user_id.equalsIgnoreCase("exit")){
+                if (user_id.equalsIgnoreCase("exit")) {
                     break;
                 }
-                if(userExist(user_id)){
-                    if(isInCourse(Integer.parseInt(user_id),Integer.parseInt(course_id))){
-                        removeFromCourse(Integer.parseInt(user_id),Integer.parseInt(course_id));
+                if (userExist(user_id)) {
+                    if (isInCourse(Integer.parseInt(user_id), Integer.parseInt(course_id))) {
+                        removeFromCourse(Integer.parseInt(user_id), Integer.parseInt(course_id));
                     } else {
                         System.out.println("User isn't in this course");
                     }
                     break;
-                }else {
+                } else {
                     System.out.println("user doesn't exist");
                 }
             }
@@ -384,10 +384,10 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
         while (true) {
             System.out.println();
             String input = ScannerUntils.scanString("Enter course id or exit");
-            if (input.equalsIgnoreCase("exit")){
+            if (input.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(input)){
+            if (courseExist(input)) {
                 editCourseMenu(Integer.parseInt(input));
                 break;
             } else {
@@ -397,25 +397,25 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     }
 
-    private void editCourseMenu(Integer id){
+    private void editCourseMenu(Integer id) {
 
         boolean running = true;
         //Menu for editing course
-        while (running){
+        while (running) {
             String input = ScannerUntils.scanString("1) Change name 2) Change description 3) Change start Date \n" +
                     "4)Change credits 5) Exit");
-            switch (Integer.parseInt(input)){
+            switch (Integer.parseInt(input)) {
                 case 1:
                     changeCourseName(id);
                     break;
                 case 2:
-                    editCourseDescription(ScannerUntils.scanString("Enter new description"),id);
+                    editCourseDescription(ScannerUntils.scanString("Enter new description"), id);
                     break;
                 case 3:
                     changeDate(id);
                     break;
                 case 4:
-                    editCourseCredits(Integer.parseInt(ScannerUntils.scanString("Enter new credits")),id);
+                    editCourseCredits(Integer.parseInt(ScannerUntils.scanString("Enter new credits")), id);
                     break;
                 case 5:
                     //Checks if anything changed, if so asks to save
@@ -430,20 +430,20 @@ public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterf
 
     private void changeCourseName(Integer id) {
         String name = ScannerUntils.scanString("Enter new name");
-        if (courseNameExist(name)){
+        if (courseNameExist(name)) {
             System.out.println("this name already exists");
         } else {
-            editCourseName(name,id);
+            editCourseName(name, id);
         }
     }
 
     private void changeDate(Integer id) {
-        while (true){
+        while (true) {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             try {
-                editCourseDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")),id);
+                editCourseDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")), id);
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Wrong format");
             }
         }

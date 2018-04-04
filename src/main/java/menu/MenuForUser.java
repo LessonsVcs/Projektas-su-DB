@@ -1,32 +1,31 @@
 package menu;
 
-import extras.ScannerUntils;
-import models.Course;
-import models.Login;
 import extras.PrintTable;
+import extras.ScannerUntils;
 import extras.UserInterface;
+import models.Course;
 import models.User;
-import java.sql.ResultSet;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
 
 import static dbUtils.CourseDB.*;
 import static dbUtils.RelationDB.*;
-import static dbUtils.UserDB.editUserPassword;
-import static dbUtils.UserDB.getUserCredits;
-import static dbUtils.UserDB.getUserID;
+import static dbUtils.UserDB.*;
 
-public class MenuForUser   implements UserInterface {
+public class MenuForUser implements UserInterface {
     private final String username;
     private boolean running = true;
     private int myID;
     private PrintTable printTable = new PrintTable();
     private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
-    MenuForUser(String username){
-        this.username= username;
-        this.myID=getUserID(this.username);
+    MenuForUser(String username) {
+        this.username = username;
+        this.myID = getUserID(this.username);
     }
 
 
@@ -36,13 +35,13 @@ public class MenuForUser   implements UserInterface {
 
             System.out.println("Select option");
             System.out.println("1) View all courses      2) Register to course      3) Show my courses     \n" +
-                               "4) Change password       5) show my credits         6) Exit    ");
+                    "4) Change password       5) show my credits         6) Exit    ");
             selectOperation(Integer.parseInt(ScannerUntils.scanString("")));
         }
     }
 
     private void selectOperation(int option) {
-        switch (option){
+        switch (option) {
             case 1:
                 viewCourses();
                 break;
@@ -56,7 +55,7 @@ public class MenuForUser   implements UserInterface {
                 changePassword();
                 break;
             case 5:
-                System.out.println("Credits : "+getUserCredits(myID));
+                System.out.println("Credits : " + getUserCredits(myID));
                 break;
             case 6:
                 exit();
@@ -73,7 +72,7 @@ public class MenuForUser   implements UserInterface {
         HashMap<Integer, Course> courseHashMap = getCourses();
         printTable.printCoursesHeader();
         for (Integer i : courseHashMap.keySet()) {
-            printTable.printCoursesList(courseHashMap.get(i).getID(),courseHashMap.get(i).getName(),
+            printTable.printCoursesList(courseHashMap.get(i).getID(), courseHashMap.get(i).getName(),
                     courseHashMap.get(i).getDescription(), format.format(courseHashMap.get(i).getStartDate()),
                     courseHashMap.get(i).getCredits());
         }
@@ -82,10 +81,10 @@ public class MenuForUser   implements UserInterface {
     @Override
     public void register() {
         while (true) {
-            String  course_id = ScannerUntils.scanString("Enter course id or exit");
-            if (course_id.equalsIgnoreCase("exit")){
+            String course_id = ScannerUntils.scanString("Enter course id or exit");
+            if (course_id.equalsIgnoreCase("exit")) {
                 break;
-            } else if(courseExist(course_id)){
+            } else if (courseExist(course_id)) {
                 registerToCourse(course_id);
                 break;
             } else {
@@ -96,18 +95,18 @@ public class MenuForUser   implements UserInterface {
     }
 
     private void registerToCourse(String course_id) {
-        if(isInCourse(myID,Integer.parseInt(course_id))){
+        if (isInCourse(myID, Integer.parseInt(course_id))) {
             System.out.println("You can't register to same course twice");
         } else {
-            if(lecturerInCourse(Integer.parseInt(course_id))){
+            if (lecturerInCourse(Integer.parseInt(course_id))) {
             } else {
                 System.out.println("Can't register to course without lecturer");
             }
-            if(getCourseStartDate(Integer.parseInt(course_id)).after(Calendar.getInstance().getTime())){
-                if(getUserCredits(myID)+getCourseCredits(Integer.parseInt(course_id))>=12){
+            if (getCourseStartDate(Integer.parseInt(course_id)).after(Calendar.getInstance().getTime())) {
+                if (getUserCredits(myID) + getCourseCredits(Integer.parseInt(course_id)) >= 12) {
                     System.out.println("you have to much credits to enroll this course");
                 } else {
-                    addToCourse(myID,Integer.parseInt(course_id));
+                    addToCourse(myID, Integer.parseInt(course_id));
                 }
             } else {
                 System.out.println("Can't register to already started course");
@@ -116,8 +115,8 @@ public class MenuForUser   implements UserInterface {
     }
 
 
-    private void changePassword(){
-        editUserPassword(ScannerUntils.scanString("Enter new password"),myID);
+    private void changePassword() {
+        editUserPassword(ScannerUntils.scanString("Enter new password"), myID);
     }
 
 
@@ -125,30 +124,30 @@ public class MenuForUser   implements UserInterface {
     public void showCourse() {
         while (true) {
             String input = ScannerUntils.scanString("Enter course id or exit");
-            if (input.equalsIgnoreCase("exit")){
+            if (input.equalsIgnoreCase("exit")) {
                 break;
             }
-            if(courseExist(input)){
+            if (courseExist(input)) {
                 showSelectedCourse(Integer.parseInt(input));
                 break;
-            }else {
+            } else {
                 System.out.println("Course doesn't exist");
             }
         }
     }
 
-    private void showSelectedCourse(Integer i){
+    private void showSelectedCourse(Integer i) {
         //Prints out table who goes to course, First name, Last name, Role
         HashMap<Integer, User> users = getUsersInCourses(i);
         Course course = getCourseInfo(i);
         try {
-            printTable.printDescription(course.getName(),course.getDescription());
+            printTable.printDescription(course.getName(), course.getDescription());
             printTable.printCourseHeader();
             for (Integer j : users.keySet()) {
                 printTable.printCourse(users.get(j).getFirstName(),
                         users.get(j).getLastName(), users.get(j).getRole().toString());
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("There's no one in course ");
         }
     }
@@ -158,18 +157,18 @@ public class MenuForUser   implements UserInterface {
         this.running = false;
     }
 
-    private void showMyCourses(){
+    private void showMyCourses() {
         //Prints out table : ID, Name, Description
         HashMap<Integer, Course> courses = getUserCourses(myID);
         printTable.printCoursesHeader();
         try {
-            for (Integer i :courses.keySet()){
+            for (Integer i : courses.keySet()) {
                 printTable.printCoursesList(courses.get(i).getID(), courses.get(i).getName(),
                         courses.get(i).getDescription(), format.format(courses.get(i).getStartDate()),
                         courses.get(i).getCredits());
 
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

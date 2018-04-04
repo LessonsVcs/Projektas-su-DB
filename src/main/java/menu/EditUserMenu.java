@@ -12,26 +12,26 @@ import static dbUtils.UserDB.*;
 
 public class EditUserMenu {
 
-    public void menu(Integer id){
+    public void menu(Integer id) {
 
         boolean running = true;
 
-        while (running){
+        while (running) {
             System.out.println("Select what to edit");
             System.out.println("1) first name    2) last name     3) password  \n" +
                     "4) username      5) date of birth 6) email     \n" +
                     "7) address       8) change role                \n" +
                     "9) exit edit menu   ");
             String input = ScannerUntils.scanString("");
-            switch (Integer.parseInt(input)){
+            switch (Integer.parseInt(input)) {
                 case 1:
-                    editUserName(ScannerUntils.scanString("Enter new name"),id);
+                    editUserName(ScannerUntils.scanString("Enter new name"), id);
                     break;
                 case 2:
-                    editUserLastname(ScannerUntils.scanString("Enter new last name"),id);
+                    editUserLastname(ScannerUntils.scanString("Enter new last name"), id);
                     break;
                 case 3:
-                    editUserPassword(ScannerUntils.scanString("Enter new password"),id);
+                    editUserPassword(ScannerUntils.scanString("Enter new password"), id);
                     break;
                 case 4:
                     changeUsername(id);
@@ -41,11 +41,11 @@ public class EditUserMenu {
 
                     break;
                 case 6:
-                    editUserEmail(ScannerUntils.scanString("Enter new  email"),id);
+                    editUserEmail(ScannerUntils.scanString("Enter new  email"), id);
 
                     break;
                 case 7:
-                    editUserAddress(ScannerUntils.scanString("Enter new address"),id);
+                    editUserAddress(ScannerUntils.scanString("Enter new address"), id);
 
                     break;
                 case 8:
@@ -64,20 +64,22 @@ public class EditUserMenu {
 
     private void changeRole(Integer id) {
 
-        while (true){
+        while (true) {
             String tmp = ScannerUntils.scanString("Enter role : admin, models, lecturer");
-            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("models") ||
-                    tmp.equalsIgnoreCase("lecturer")){
-                if(tmp.equalsIgnoreCase("admin")){
-                    editUserRole(Roles.ADMIN,id);
+            if (tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("models") ||
+                    tmp.equalsIgnoreCase("lecturer")) {
+                if (tmp.equalsIgnoreCase("admin")) {
+                    editUserRole(Roles.ADMIN, id);
                     break;
-                } if(tmp.equalsIgnoreCase("lecturer" )){
-                    editUserRole(Roles.LECTURER,id);
+                }
+                if (tmp.equalsIgnoreCase("lecturer")) {
+                    editUserRole(Roles.LECTURER, id);
                     break;
-                } if(tmp.equalsIgnoreCase("models")) {
-                    editUserRole(Roles.USER,id);
+                }
+                if (tmp.equalsIgnoreCase("models")) {
+                    editUserRole(Roles.USER, id);
                     break;
-                } else{
+                } else {
                     System.out.println("can't change to same role");
                 }
             } else {
@@ -87,26 +89,26 @@ public class EditUserMenu {
     }
 
     private void setDateOfBirth(Integer id) {
-        while (true){
+        while (true) {
             try {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                 Date date = format.parse(ScannerUntils.scanString("enter new birth date. Year-Month-day Ex: 2000-10-10"));
-                editUserDate(date,id);
+                editUserDate(date, id);
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("wrong input");
             }
         }
     }
 
     private void changeUsername(Integer id) {
-        while (true){
+        while (true) {
             String username = ScannerUntils.scanString("Enter new username");
-            if (checkUsername(username)!=null){
+            if (checkUsername(username) != null) {
                 System.out.println("this username already exist");
                 break;
             } else {
-                editUserUsername(username,id);
+                editUserUsername(username, id);
                 break;
             }
 

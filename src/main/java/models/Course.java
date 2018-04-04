@@ -3,8 +3,8 @@ package models;
 import java.util.Date;
 
 public class Course {
-    private String  name;
-    private String  description;
+    private String name;
+    private String description;
     private Date startDate;
     private String credits;
 
@@ -18,7 +18,8 @@ public class Course {
 
     private String ID;
 
-    public Course(){}
+    public Course() {
+    }
 
     public String getCredits() {
         return credits;
